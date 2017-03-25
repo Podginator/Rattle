@@ -1,0 +1,7 @@
+class hello {
+    a = "b"
+}
+
+
+
+i->a = "c"
