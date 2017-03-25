@@ -111,4 +111,5 @@ public interface Value {
      * Test this value and another for <
      */
     public Value lt(Value v);
+
 }

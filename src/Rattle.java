@@ -1,9 +1,11 @@
+import interpreter.Interpreter;
+
 /**
- * Convenient runner for the Sili interpreter.
+ * Convenient runner for the Rattle interpreter.
  */
 
 public class Rattle {
     public static void main(String[] args) {
-        interpreter.Interpreter.main(args);
+        Interpreter.main(args);
     }
 }

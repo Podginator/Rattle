@@ -25,7 +25,7 @@ public interface RattleConstants {
   /** RegularExpression Id. */
   int WHILE = 12;
   /** RegularExpression Id. */
-  int WRITE = 13;
+  int PRINT = 13;
   /** RegularExpression Id. */
   int OR = 14;
   /** RegularExpression Id. */
@@ -141,13 +141,13 @@ public interface RattleConstants {
     "\"ELSE\"",
     "\"FOR\"",
     "\"WHILE\"",
-    "\"WRITE\"",
+    "\"PRINT\"",
     "\"OR\"",
     "\"AND\"",
     "\"NOT\"",
     "\"TRUE\"",
     "\"FALSE\"",
-    "\"FN\"",
+    "\"DEF\"",
     "\"CLASS\"",
     "\"RETURN\"",
     "\"QUIT\"",

@@ -85,13 +85,13 @@ TOKEN [ IGNORE_CASE ] : /* RESERVED WORDS AND LITERALS */
 | < ELSE : "ELSE" >
 | < FOR : "FOR" >
 | < WHILE : "WHILE" >
-| < WRITE : "WRITE" >
+| < PRINT : "PRINT" >
 | < OR : "OR" >
 | < AND : "AND" >
 | < NOT : "NOT" >
 | < TRUE : "TRUE" >
 | < FALSE : "FALSE" >
-| < FN : "FN" >
+| < FN : "DEF" >
 | < CLASS : "CLASS" >
 | < RETURN : "RETURN" >
 | < QUIT : "QUIT" >
@@ -461,7 +461,7 @@ void whileloop() #WhileLoop :
 void write() :
 {}
 {
-  < WRITE > expression() #Write(1)
+  < PRINT > expression() #Write(1)
 }
 
 void arglist() #ArgList :
@@ -547,16 +547,18 @@ void unary_expression() :
 void primary_expression() :
 {}
 {
-  literal()
-| LOOKAHEAD(lambda_define())
-  lambda_define()
-| LOOKAHEAD(fn_invoke())
-  fn_invoke()
-| LOOKAHEAD(method_invoke())
-    method_invoke()
-| LOOKAHEAD(3) dereference()
-| obj_create()
-| "(" expression() ")"
+    (
+          literal()
+        | LOOKAHEAD(lambda_define())
+          lambda_define()
+        | LOOKAHEAD(fn_invoke())
+          fn_invoke()
+        | LOOKAHEAD(method_invoke())
+            method_invoke()
+        | LOOKAHEAD(3) dereference()
+        | obj_create()
+        | "(" expression() ")"
+    )
 }
 
 void fn_invoke() #FnInvoke :

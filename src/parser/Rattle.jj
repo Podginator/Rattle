@@ -89,13 +89,13 @@ TOKEN [ IGNORE_CASE ] : /* RESERVED WORDS AND LITERALS */
 | < ELSE : "ELSE" >
 | < FOR : "FOR" >
 | < WHILE : "WHILE" >
-| < WRITE : "WRITE" >
+| < PRINT : "PRINT" >
 | < OR : "OR" >
 | < AND : "AND" >
 | < NOT : "NOT" >
 | < TRUE : "TRUE" >
 | < FALSE : "FALSE" >
-| < FN : "FN" >
+| < FN : "DEF" >
 | < CLASS : "CLASS" >
 | < RETURN : "RETURN" >
 | < QUIT : "QUIT" >
@@ -912,7 +912,7 @@ void whileloop()            :
 void write() :
 {}
 {
-  < WRITE >/*@bgen(jjtree) #Write( 1) */
+  < PRINT >/*@bgen(jjtree) #Write( 1) */
             {
               ASTWrite jjtn001 = new ASTWrite(JJTWRITE);
               boolean jjtc001 = true;
@@ -1456,16 +1456,18 @@ void unary_expression() :
 void primary_expression() :
 {}
 {
-  literal()
-| LOOKAHEAD(lambda_define())
-  lambda_define()
-| LOOKAHEAD(fn_invoke())
-  fn_invoke()
-| LOOKAHEAD(method_invoke())
-    method_invoke()
-| LOOKAHEAD(3) dereference()
-| obj_create()
-| "(" expression() ")"
+    (
+          literal()
+        | LOOKAHEAD(lambda_define())
+          lambda_define()
+        | LOOKAHEAD(fn_invoke())
+          fn_invoke()
+        | LOOKAHEAD(method_invoke())
+            method_invoke()
+        | LOOKAHEAD(3) dereference()
+        | obj_create()
+        | "(" expression() ")"
+    )
 }
 
 void fn_invoke()           :
