@@ -1,0 +1,3 @@
+#!/bin/sh
+../../jjtree Rattle.jjt
+../../compile/javacc Rattle.jj
