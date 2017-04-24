@@ -52,6 +52,15 @@ public abstract class ValueAbstract implements Value {
         throw new ExceptionSemantic("Cannot convert " + getName() + " to boolean.");
     }
 
+    @Override
+    public Value clone() {
+        throw new ExceptionSemantic("Cannot perform operation on this primitive");
+    }
+
+    @Override
+    public int longValue() {
+        throw new ExceptionSemantic("Cannot convert " + getName() + " to int.");
+    }
 
     /**
      * Convert this to a primitive double.

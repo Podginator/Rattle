@@ -103,23 +103,26 @@ TOKEN [ IGNORE_CASE ] : /* RESERVED WORDS AND LITERALS */
 TOKEN : /* LITERALS */
 {
 
-  < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >
-| 
-  < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >
-| 
-  < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >
-| 
-  < FLOATING_POINT_LITERAL :
-    ([ "0"-"9" ])+ "." ([ "0"-"9" ])* (< EXPONENT >)? ([ "f", "F", "d", "D" ])?
-  | "." ([ "0"-"9" ])+ (< EXPONENT >)? ([ "f", "F", "d", "D" ])?
-  | ([ "0"-"9" ])+ < EXPONENT > ([ "f", "F", "d", "D" ])?
-  | ([ "0"-"9" ])+ (< EXPONENT >)? [ "f", "F", "d", "D" ]
-  |   < DECIMAL_LITERAL > ([ "l", "L" ])?
-  | < HEX_LITERAL > ([ "l", "L" ])?
-  | < OCTAL_LITERAL > ([ "l", "L" ])?
-  >
-| 
-  < #EXPONENT : [ "e", "E" ] ([ "+", "-" ])? ([ "0"-"9" ])+ >
+   < INTEGER_LITERAL:
+         <DECIMAL_LITERAL> (["l","L"])?
+       | <HEX_LITERAL> (["l","L"])?
+       | <OCTAL_LITERAL> (["l","L"])?
+   >
+ |
+   < #DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
+ |
+   < #HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ >
+ |
+   < #OCTAL_LITERAL: "0" (["0"-"7"])* >
+ |
+   < FLOATING_POINT_LITERAL:
+         (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
+       | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
+       | (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?
+       | (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"]
+   >
+
+ |  < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
 | 
   < STRING_LITERAL :
     (
@@ -265,6 +268,8 @@ void statement() #Statement :
 {
   LOOKAHEAD(assignment())
   assignment()
+| LOOKAHEAD(mulassignment())
+   mulassignment()
 | 	fndef()
 | classdef()
 | 	block()
@@ -362,17 +367,29 @@ void member_assignment()  #MemAssignment(2) :
 void assignment() #Assignment :
 {}
 {
+        (
+            LOOKAHEAD(member_identifier())member_identifier() { jjtThis.isObject = true; }
+          | LOOKAHEAD(1)identifier()
+        )
+            "="
+            (expression())
+
+}
+
+void mulassignment()   #MultiAssignment :
+{}
+{
     (
-        LOOKAHEAD(member_identifier())member_identifier() { jjtThis.isObject = true; }
+        LOOKAHEAD(member_identifier())member_identifier(){ jjtThis.isObject = true; }
       | LOOKAHEAD(1)identifier()
     )
     (
         ","
         (
-           LOOKAHEAD(member_identifier())member_identifier() { jjtThis.isObject = true; }
+           LOOKAHEAD(member_identifier())member_identifier()
          | LOOKAHEAD(1)identifier()
-      )
-    )*
+        )
+    )+
 
     "="
 
@@ -380,6 +397,7 @@ void assignment() #Assignment :
         expression()
         ("," expression())*
     )
+
 }
 
 void ifstatement() #IfStatement :
@@ -541,7 +559,14 @@ void unary_expression() :
   < NOT > unary_expression() #UnaryNot(1)
 | "+" unary_expression() #UnaryPlus(1)
 | "-" unary_expression() #UnaryMinus(1)
+| LOOKAHEAD(indexed_expression()) indexed_expression()
 | primary_expression()
+}
+
+void indexed_expression()  #IndexedExpression :
+{}
+{
+    primary_expression() "[" integer() "]"
 }
 
 void primary_expression() :
@@ -581,7 +606,8 @@ void method_invoke() #MethodInvoke :
 void literal() :
 {}
 {
-  number()
+    integer()
+|  rational()
 | character()
 | bool()
 }
@@ -636,16 +662,18 @@ void character() #Character :
 }
 
 
-void number() #Number :
+void integer() #Integer :
+{Token t;}
 {
-  Token t;
+	t = <INTEGER_LITERAL> {jjtThis.tokenValue = t.image;}
 }
+
+void rational() #Rational :
+{Token t;}
 {
-  t = < FLOATING_POINT_LITERAL >
-  {
-    jjtThis.tokenValue = t.image;
-  }
+	t = <FLOATING_POINT_LITERAL> {jjtThis.tokenValue = t.image;}
 }
+
 
 void quit() :
 {}

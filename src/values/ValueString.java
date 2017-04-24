@@ -40,4 +40,9 @@ public class ValueString extends ValueAbstract {
     public String toString() {
         return internalValue;
     }
+
+    @Override
+    public Value clone() {
+        return new ValueString(internalValue);
+    }
 }

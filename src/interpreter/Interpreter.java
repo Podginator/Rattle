@@ -2,6 +2,9 @@ package interpreter;
 
 import parser.*;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 public class Interpreter {
 
     private static void usage() {
@@ -16,7 +19,14 @@ public class Interpreter {
                 debugAST = true;
             else {
                 usage();
-                return;
+                //return;
+            }
+        }
+        if (args.length == 2) {
+            try {
+                System.setIn(new FileInputStream(args[1]));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
         }
         Rattle language = new Rattle(System.in);
@@ -25,7 +35,7 @@ public class Interpreter {
             RattleVisitor nodeVisitor;
 
             if (debugAST)
-                nodeVisitor = new ParserDebugger();
+                nodeVisitor = new Parser();
             else
                 nodeVisitor = new Parser();
             parser.jjtAccept(nodeVisitor, null);

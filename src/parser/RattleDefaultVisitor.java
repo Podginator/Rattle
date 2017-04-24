@@ -39,6 +39,9 @@ public class RattleDefaultVisitor implements RattleVisitor{
   public Object visit(ASTAssignment node, Object data){
     return defaultVisit(node, data);
   }
+  public Object visit(ASTMultiAssignment node, Object data){
+    return defaultVisit(node, data);
+  }
   public Object visit(ASTIfStatement node, Object data){
     return defaultVisit(node, data);
   }
@@ -111,6 +114,9 @@ public class RattleDefaultVisitor implements RattleVisitor{
   public Object visit(ASTUnaryMinus node, Object data){
     return defaultVisit(node, data);
   }
+  public Object visit(ASTIndexedExpression node, Object data){
+    return defaultVisit(node, data);
+  }
   public Object visit(ASTFnInvoke node, Object data){
     return defaultVisit(node, data);
   }
@@ -129,7 +135,10 @@ public class RattleDefaultVisitor implements RattleVisitor{
   public Object visit(ASTCharacter node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTNumber node, Object data){
+  public Object visit(ASTInteger node, Object data){
+    return defaultVisit(node, data);
+  }
+  public Object visit(ASTRational node, Object data){
     return defaultVisit(node, data);
   }
   public Object visit(ASTTrue node, Object data){
@@ -139,4 +148,4 @@ public class RattleDefaultVisitor implements RattleVisitor{
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=36c48349da8992a3768f813c447022e1 (do not edit this line) */
+/* JavaCC - OriginalChecksum=3fb54e1c8aa38741abe2ec381bdc3a48 (do not edit this line) */

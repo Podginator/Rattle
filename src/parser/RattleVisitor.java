@@ -14,6 +14,7 @@ public interface RattleVisitor
   public Object visit(ASTReturnExpression node, Object data);
   public Object visit(ASTMemAssignment node, Object data);
   public Object visit(ASTAssignment node, Object data);
+  public Object visit(ASTMultiAssignment node, Object data);
   public Object visit(ASTIfStatement node, Object data);
   public Object visit(ASTObjCreate node, Object data);
   public Object visit(ASTMemInstantiate node, Object data);
@@ -38,14 +39,16 @@ public interface RattleVisitor
   public Object visit(ASTUnaryNot node, Object data);
   public Object visit(ASTUnaryPlus node, Object data);
   public Object visit(ASTUnaryMinus node, Object data);
+  public Object visit(ASTIndexedExpression node, Object data);
   public Object visit(ASTFnInvoke node, Object data);
   public Object visit(ASTMethodInvoke node, Object data);
   public Object visit(ASTIdentifier node, Object data);
   public Object visit(ASTMemIdentifier node, Object data);
   public Object visit(ASTDereference node, Object data);
   public Object visit(ASTCharacter node, Object data);
-  public Object visit(ASTNumber node, Object data);
+  public Object visit(ASTInteger node, Object data);
+  public Object visit(ASTRational node, Object data);
   public Object visit(ASTTrue node, Object data);
   public Object visit(ASTFalse node, Object data);
 }
-/* JavaCC - OriginalChecksum=399b11ce6309f368e56c3adcdb8b758d (do not edit this line) */
+/* JavaCC - OriginalChecksum=5ae4667cf0b33c5bbeb8220c2b717738 (do not edit this line) */

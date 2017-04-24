@@ -11,6 +11,8 @@ package interpreter;
 public class BaseASTNode {
 
 
+    public Object optimized = null;
+
     // The actual source code from which the token was constructed.  Only set on literals, etc.
     public String tokenValue = null;
 

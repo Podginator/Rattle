@@ -19,6 +19,11 @@ public class ValueBoolean extends ValueAbstract {
         return internalValue;
     }
 
+    @Override
+    public Value clone() {
+        return new ValueBoolean(internalValue);
+    }
+
     /**
      * Convert this to a primitive string.
      */

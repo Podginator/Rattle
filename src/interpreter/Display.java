@@ -92,7 +92,7 @@ class Display implements ClassDefinitionRepository {
             level--;
         }
 
-        // Look through the outerscopes (Should recurse back until we hit global).
+       // // Look through the outerscopes (Should recurse back until we hit global).
         if (outerscope != null && traverseDown) {
             return outerscope.findReference(name);
         }

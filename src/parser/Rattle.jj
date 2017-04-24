@@ -107,23 +107,26 @@ TOKEN [ IGNORE_CASE ] : /* RESERVED WORDS AND LITERALS */
 TOKEN : /* LITERALS */
 {
 
-  < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >
-| 
-  < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >
-| 
-  < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >
-| 
-  < FLOATING_POINT_LITERAL :
-    ([ "0"-"9" ])+ "." ([ "0"-"9" ])* (< EXPONENT >)? ([ "f", "F", "d", "D" ])?
-  | "." ([ "0"-"9" ])+ (< EXPONENT >)? ([ "f", "F", "d", "D" ])?
-  | ([ "0"-"9" ])+ < EXPONENT > ([ "f", "F", "d", "D" ])?
-  | ([ "0"-"9" ])+ (< EXPONENT >)? [ "f", "F", "d", "D" ]
-  |   < DECIMAL_LITERAL > ([ "l", "L" ])?
-  | < HEX_LITERAL > ([ "l", "L" ])?
-  | < OCTAL_LITERAL > ([ "l", "L" ])?
-  >
-| 
-  < #EXPONENT : [ "e", "E" ] ([ "+", "-" ])? ([ "0"-"9" ])+ >
+   < INTEGER_LITERAL:
+         <DECIMAL_LITERAL> (["l","L"])?
+       | <HEX_LITERAL> (["l","L"])?
+       | <OCTAL_LITERAL> (["l","L"])?
+   >
+ |
+   < #DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
+ |
+   < #HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ >
+ |
+   < #OCTAL_LITERAL: "0" (["0"-"7"])* >
+ |
+   < FLOATING_POINT_LITERAL:
+         (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
+       | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
+       | (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?
+       | (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"]
+   >
+
+ |  < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
 | 
   < STRING_LITERAL :
     (
@@ -306,6 +309,8 @@ void statement()            :
 /*@egen*/
   LOOKAHEAD(assignment())
   assignment()
+| LOOKAHEAD(mulassignment())
+   mulassignment()
 | 	fndef()
 | classdef()
 | 	block()
@@ -609,19 +614,57 @@ void assignment()             :
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
 {/*@bgen(jjtree) Assignment */
+        try {
+/*@egen*/
+        (
+            LOOKAHEAD(member_identifier())member_identifier() { jjtn000.isObject = true; }
+          | LOOKAHEAD(1)identifier()
+        )
+            "="
+            (expression())/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+
+}
+
+void mulassignment()                    :
+{/*@bgen(jjtree) MultiAssignment */
+  ASTMultiAssignment jjtn000 = new ASTMultiAssignment(JJTMULTIASSIGNMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) MultiAssignment */
     try {
 /*@egen*/
     (
-        LOOKAHEAD(member_identifier())member_identifier() { jjtn000.isObject = true; }
+        LOOKAHEAD(member_identifier())member_identifier(){ jjtn000.isObject = true; }
       | LOOKAHEAD(1)identifier()
     )
     (
         ","
         (
-           LOOKAHEAD(member_identifier())member_identifier() { jjtn000.isObject = true; }
+           LOOKAHEAD(member_identifier())member_identifier()
          | LOOKAHEAD(1)identifier()
-      )
-    )*
+        )
+    )+
 
     "="
 
@@ -649,6 +692,7 @@ void assignment()             :
       }
     }
 /*@egen*/
+
 }
 
 void ifstatement()              :
@@ -1450,7 +1494,40 @@ void unary_expression() :
         }
       }
 /*@egen*/               
+| LOOKAHEAD(indexed_expression()) indexed_expression()
 | primary_expression()
+}
+
+void indexed_expression()                     :
+{/*@bgen(jjtree) IndexedExpression */
+  ASTIndexedExpression jjtn000 = new ASTIndexedExpression(JJTINDEXEDEXPRESSION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) IndexedExpression */
+    try {
+/*@egen*/
+    primary_expression() "[" integer() "]"/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
 }
 
 void primary_expression() :
@@ -1542,7 +1619,8 @@ void method_invoke()               :
 void literal() :
 {}
 {
-  number()
+    integer()
+|  rational()
 | character()
 | bool()
 }
@@ -1688,33 +1766,52 @@ void character()            :
 }
 
 
-void number()         :
-{/*@bgen(jjtree) Number */
-  ASTNumber jjtn000 = new ASTNumber(JJTNUMBER);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+void integer()          :
+{/*@bgen(jjtree) Integer */
+ ASTInteger jjtn000 = new ASTInteger(JJTINTEGER);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
+{/*@bgen(jjtree) Integer */
+        try {
 /*@egen*/
-  Token t;
-}
-{/*@bgen(jjtree) Number */
-  try {
-/*@egen*/
-  t = < FLOATING_POINT_LITERAL >/*@bgen(jjtree)*/
-  {
-    jjtree.closeNodeScope(jjtn000, true);
-    jjtc000 = false;
-  }
-/*@egen*/
-  {
-    jjtn000.tokenValue = t.image;
-  }/*@bgen(jjtree)*/
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-  }
+	t = <INTEGER_LITERAL>/*@bgen(jjtree)*/
+                              {
+                                jjtree.closeNodeScope(jjtn000, true);
+                                jjtc000 = false;
+                              }
+/*@egen*/ {jjtn000.tokenValue = t.image;}/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
 /*@egen*/
 }
+
+void rational()           :
+{/*@bgen(jjtree) Rational */
+ ASTRational jjtn000 = new ASTRational(JJTRATIONAL);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
+{/*@bgen(jjtree) Rational */
+        try {
+/*@egen*/
+	t = <FLOATING_POINT_LITERAL>/*@bgen(jjtree)*/
+                                     {
+                                       jjtree.closeNodeScope(jjtn000, true);
+                                       jjtc000 = false;
+                                     }
+/*@egen*/ {jjtn000.tokenValue = t.image;}/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
 
 void quit() :
 {}

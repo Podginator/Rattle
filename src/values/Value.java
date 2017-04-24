@@ -75,6 +75,9 @@ public interface Value {
      */
     public double doubleValue();
 
+
+    public int longValue();
+
     /**
      * Convert this to a primitive string.
      */
@@ -111,5 +114,8 @@ public interface Value {
      * Test this value and another for <
      */
     public Value lt(Value v);
+
+
+    public Value clone();
 
 }

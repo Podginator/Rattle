@@ -19,6 +19,18 @@ public class Parser implements RattleVisitor {
         return (SimpleNode) node.jjtGetChild(childIndex);
     }
 
+    // Execute a given child of a given node, and return its value as a Value.
+    // This is used by the expression evaluation nodes.
+    Value doChild(SimpleNode node, int childIndex) {
+        try {
+            return (Value) doChild(node, childIndex, null);
+        } catch (ClassCastException e) {
+            System.out.println("Expression returns multiple values. Must index to use as single Value");
+            System.exit(1);
+        }
+        return null;
+    }
+
 
     // Get the token value of the ith child of a given node.
     private static String getTokenOfChild(SimpleNode node, int childIndex) {
@@ -32,7 +44,6 @@ public class Parser implements RattleVisitor {
 
     // Name this better.
     Value[] doChildRes(SimpleNode node, int childIndex, Object data) {
-
         Object childRes = node.jjtGetChild(childIndex).jjtAccept(this, data);
 
         if (childRes instanceof Value[]) {
@@ -181,8 +192,11 @@ public class Parser implements RattleVisitor {
             scope = globalScope;
         }
 
-        Object ret = retVal == null ?  data : retVal;
-        return ret;
+
+        if (retVal != null) {
+            return  retVal.length == 1 ? retVal[0] : retVal;
+        }
+        return data;
     }
 
     // Function invocation argument list.
@@ -201,7 +215,7 @@ public class Parser implements RattleVisitor {
     // Execute an IF
     public Object visit(ASTIfStatement node, Object data) {
         // evaluate boolean expression
-        Value hopefullyValueBoolean = doChildRes(node, 0, null)[0];
+        Value hopefullyValueBoolean = doChild(node, 0);
         if (!(hopefullyValueBoolean instanceof ValueBoolean))
             throw new ExceptionSemantic("The test expression of an if statement must be boolean.");
         if (((ValueBoolean) hopefullyValueBoolean).booleanValue())
@@ -217,7 +231,7 @@ public class Parser implements RattleVisitor {
         doChild(node, 0, null);
         while (true) {
             // evaluate loop test
-            Value hopefullyValueBoolean = doChildRes(node, 1, null)[0];
+            Value hopefullyValueBoolean = doChild(node, 1);
             if (!(hopefullyValueBoolean instanceof ValueBoolean))
                 throw new ExceptionSemantic("The test expression of a for loop must be boolean.");
             if (!((ValueBoolean) hopefullyValueBoolean).booleanValue())
@@ -233,6 +247,54 @@ public class Parser implements RattleVisitor {
     // Process an identifier
     // This doesn't do anything, but needs to be here because we need an ASTIdentifier node.
     public Object visit(ASTIdentifier node, Object data) {
+        return data;
+    }
+
+    @Override
+    public Object visit(ASTMultiAssignment node, Object data) {
+        Display.Reference reference  = null;
+
+        int indexOfExpressions;
+
+        if (node.optimized != null) {
+            indexOfExpressions = (Integer)node.optimized;
+        } else {
+            indexOfExpressions = getIndexOfExpressionsInAssignment(node);
+            node.optimized = new Integer(indexOfExpressions);
+        }
+
+        // Iterate over all of them, give them values.
+        int i = 0;
+        int j = 0;
+        while (i < indexOfExpressions) {
+            Value[] vals = doChildRes(node, indexOfExpressions + j, null);
+
+            for (Value val : vals) {
+                SimpleNode child = getChild(node, i);
+
+                if (child.optimized != null) {
+                    reference = (Display.Reference) (child.optimized);
+                } else {
+
+                    if (child.isObject) {
+                        reference = getReferenceFromMember((ASTMemIdentifier) child);
+                    } else {
+                        String name = child.tokenValue;
+                        reference = scope.findReference(name);
+
+                        if (reference == null) {
+                            reference = scope.defineVariable(name);
+                        }
+                    }
+
+                    child.optimized = reference;
+                }
+                reference.setValue(val);
+                i++;
+            }
+            j++;
+        }
+
         return data;
     }
 
@@ -258,8 +320,14 @@ public class Parser implements RattleVisitor {
         return data;
     }
 
+
     // Dereference a variable or parameter, and return its value.
     public Object visit(ASTDereference node, Object data) {
+
+        if (node.optimized != null) {
+            return ((Reference)node.optimized).getValue();
+        }
+
         SimpleNode child = getChild(node, 0);
         String name = getTokenOfChild(node, 0);
         Display.Reference reference = scope.findReference(name);
@@ -282,10 +350,10 @@ public class Parser implements RattleVisitor {
                 }
             }
         }
+        node.optimized = reference;
 
         return reference.getValue();
     }
-
 
     private Reference getReferenceFromMember(ASTMemIdentifier id) {
         Reference res =  scope.findReference(id.tokenValue);
@@ -305,8 +373,7 @@ public class Parser implements RattleVisitor {
         return res;
     }
 
-
-    private int getIndexOfExpressionsInAssignment(ASTAssignment node) {
+    private int getIndexOfExpressionsInAssignment(ASTMultiAssignment node) {
 
         // Iterate through all the nodes.
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
@@ -322,142 +389,155 @@ public class Parser implements RattleVisitor {
 
     }
 
+    @Override
+    public Object visit(ASTIndexedExpression node, Object data) {
+        int index = doChild(node, 1).longValue();
+        return doChildRes(node, 0, data)[index];
+    }
+
     // Execute an assignment statement.
     public Object visit(ASTAssignment node, Object data) {
 
-        Display.Reference reference;
-        int indexOfExpressions = getIndexOfExpressionsInAssignment(node);
+        Display.Reference reference  = null;
 
-        // Iterate over all of them, give them values.
-        int i = 0;
-        int j = 0;
-        while (i < indexOfExpressions) {
 
-            Value[] vals = doChildRes(node, indexOfExpressions+j, null);
+        if (node.optimized == null) {
+            String name = getTokenOfChild(node, 0);
 
-            for (Value val : vals) {
-                SimpleNode child = getChild(node, i);
-
-                if (child.isObject) {
-                    reference = getReferenceFromMember((ASTMemIdentifier)child);
-                } else {
-                    String name = child.tokenValue;
-                    reference = scope.findReference(name);
-
-                    if (reference == null) {
-                        reference = scope.defineVariable(name);
-                    }
-                }
-                reference.setValue(val);
-                i++;
+            if (node.isObject) {
+                reference = getReferenceFromMember((ASTMemIdentifier) node.jjtGetChild(0));
+            } else {
+                reference = scope.findReference(name);
+                if (reference == null)
+                    reference = scope.defineVariable(name);
+                node.optimized = reference;
             }
-            j++;
-        }
-
-
+        } else
+            reference = (Display.Reference)node.optimized;
+        reference.setValue(doChild(node, 1));
         return data;
+
+
     }
 
     // OR
     public Object visit(ASTOr node, Object data) {
-        return doChildRes(node, 0, null)[0].or(doChildRes(node, 1,null)[0]);
+        return doChild(node, 0).or(doChild(node, 1));
     }
 
     // AND
     public Object visit(ASTAnd node, Object data) {
-        return doChildRes(node, 0, null)[0].and(doChildRes(node, 1,null)[0]);
+        return doChild(node, 0).and(doChild(node, 1));
     }
 
     // ==
     public Object visit(ASTCompEqual node, Object data) {
-        return doChildRes(node, 0, null)[0].eq(doChildRes(node, 1,null)[0]);
+        return doChild(node, 0).eq(doChild(node, 1));
     }
 
     // !=
     public Object visit(ASTCompNequal node, Object data) {
-        return doChildRes(node, 0, null)[0].neq(doChildRes(node, 1,null)[0]);
+        return doChild(node, 0).neq(doChild(node, 1));
     }
 
     // >=
     public Object visit(ASTCompGTE node, Object data) {
-        return doChildRes(node, 0, null)[0].gte(doChildRes(node, 1,null)[0]);
+        return doChild(node, 0).gte(doChild(node, 1));
     }
 
     // <=
     public Object visit(ASTCompLTE node, Object data) {
-        return doChildRes(node, 0, null)[0].lte(doChildRes(node, 1,null)[0]);
+        return doChild(node, 0).lte(doChild(node, 1));
     }
 
     // >
     public Object visit(ASTCompGT node, Object data) {
-        return doChildRes(node, 0, null)[0].gt(doChildRes(node, 1,null)[0]);
+        return doChild(node, 0).gt(doChild(node, 1));
     }
 
     // <
     public Object visit(ASTCompLT node, Object data) {
-        return doChildRes(node, 0, null)[0].lt(doChildRes(node, 1,null)[0]);
+        return doChild(node, 0).lt(doChild(node, 1));
     }
 
     // +
     public Object visit(ASTAdd node, Object data) {
-        return doChildRes(node, 0, null)[0].add(doChildRes(node, 1,null)[0]);
+        return doChild(node, 0).add(doChild(node, 1));
     }
 
     // -
     public Object visit(ASTSubtract node, Object data) {
-        return doChildRes(node, 0, null)[0].subtract(doChildRes(node, 1, null)[0]);
+        return doChild(node, 0).subtract(doChild(node, 1));
     }
 
     // *
     public Object visit(ASTTimes node, Object data) {
-        return doChildRes(node, 0, null)[0].mult(doChildRes(node, 1, null)[0]);
+        return doChild(node, 0).mult(doChild(node, 1));
     }
 
     // /
     public Object visit(ASTDivide node, Object data) {
-        return doChildRes(node, 0, null)[0].div(doChildRes(node, 1, null)[0]);
+        return doChild(node, 0).div(doChild(node, 1));
     }
 
     // NOT
     public Object visit(ASTUnaryNot node, Object data) {
-        return doChildRes(node, 0, null)[0].not();
+        return doChild(node, 0).not();
     }
 
     // + (unary)
     public Object visit(ASTUnaryPlus node, Object data) {
-        return doChildRes(node, 0, null)[0].unary_plus();
+        return doChild(node, 0).unary_plus();
     }
 
     // - (unary)
     public Object visit(ASTUnaryMinus node, Object data) {
-        return doChildRes(node, 0, null)[0].unary_minus();
+        return doChild(node, 0).unary_minus();
     }
 
-    // Return string literal
-    public Object visit(ASTCharacter node, Object data) {
-        return ValueString.stripDelimited(node.tokenValue);
+
+    // Return integer literal
+    public Object visit(ASTInteger node, Object data) {
+        if (node.optimized == null)
+            node.optimized = new ValueInteger(Integer.parseInt(node.tokenValue));
+        return node.optimized;
     }
 
     // Return integer literal
-    public Object visit(ASTNumber node, Object data) {
-        return new ValueNumber(Double.parseDouble(node.tokenValue));
+    public Object visit(ASTRational node, Object data) {
+        if (node.optimized == null)
+            node.optimized = new ValueRational(Double.parseDouble(node.tokenValue));
+        return node.optimized;
     }
+
+
+    // Return string literal
+    public Object visit(ASTCharacter node, Object data) {
+        if (node.optimized == null)
+            node.optimized = ValueString.stripDelimited(node.tokenValue);
+        return node.optimized;
+    }
+
 
     // Return true literal
     public Object visit(ASTTrue node, Object data) {
-        return  new ValueBoolean(true);
+        if (node.optimized == null)
+            node.optimized = new ValueBoolean(true);
+        return node.optimized;
     }
 
     // Return false literal
     public Object visit(ASTFalse node, Object data) {
-        return new ValueBoolean(false);
+        if (node.optimized == null)
+            node.optimized = new ValueBoolean(false);
+        return node.optimized;
     }
 
     @Override
     public Object visit(ASTWhileLoop node, Object data) {
         while (true) {
             // evaluate loop test
-            Value hopefullyValueBoolean = doChildRes(node, 0, null)[0];
+            Value hopefullyValueBoolean = doChild(node, 0);
             if (!(hopefullyValueBoolean instanceof ValueBoolean))
                 throw new ExceptionSemantic("The test expression of a for loop must be boolean.");
             if (!((ValueBoolean) hopefullyValueBoolean).booleanValue())

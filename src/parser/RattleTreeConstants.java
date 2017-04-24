@@ -13,40 +13,43 @@ public interface RattleTreeConstants
   public int JJTRETURNEXPRESSION = 7;
   public int JJTMEMASSIGNMENT = 8;
   public int JJTASSIGNMENT = 9;
-  public int JJTIFSTATEMENT = 10;
-  public int JJTOBJCREATE = 11;
-  public int JJTMEMINSTANTIATE = 12;
-  public int JJTMETHODINSTANTIATE = 13;
-  public int JJTLABMDADEFINE = 14;
-  public int JJTFORLOOP = 15;
-  public int JJTWHILELOOP = 16;
-  public int JJTVOID = 17;
-  public int JJTWRITE = 18;
-  public int JJTARGLIST = 19;
-  public int JJTOR = 20;
-  public int JJTAND = 21;
-  public int JJTCOMPEQUAL = 22;
-  public int JJTCOMPNEQUAL = 23;
-  public int JJTCOMPGTE = 24;
-  public int JJTCOMPLTE = 25;
-  public int JJTCOMPGT = 26;
-  public int JJTCOMPLT = 27;
-  public int JJTADD = 28;
-  public int JJTSUBTRACT = 29;
-  public int JJTTIMES = 30;
-  public int JJTDIVIDE = 31;
-  public int JJTUNARYNOT = 32;
-  public int JJTUNARYPLUS = 33;
-  public int JJTUNARYMINUS = 34;
-  public int JJTFNINVOKE = 35;
-  public int JJTMETHODINVOKE = 36;
-  public int JJTIDENTIFIER = 37;
-  public int JJTMEMIDENTIFIER = 38;
-  public int JJTDEREFERENCE = 39;
-  public int JJTCHARACTER = 40;
-  public int JJTNUMBER = 41;
-  public int JJTTRUE = 42;
-  public int JJTFALSE = 43;
+  public int JJTMULTIASSIGNMENT = 10;
+  public int JJTIFSTATEMENT = 11;
+  public int JJTOBJCREATE = 12;
+  public int JJTMEMINSTANTIATE = 13;
+  public int JJTMETHODINSTANTIATE = 14;
+  public int JJTLABMDADEFINE = 15;
+  public int JJTFORLOOP = 16;
+  public int JJTWHILELOOP = 17;
+  public int JJTVOID = 18;
+  public int JJTWRITE = 19;
+  public int JJTARGLIST = 20;
+  public int JJTOR = 21;
+  public int JJTAND = 22;
+  public int JJTCOMPEQUAL = 23;
+  public int JJTCOMPNEQUAL = 24;
+  public int JJTCOMPGTE = 25;
+  public int JJTCOMPLTE = 26;
+  public int JJTCOMPGT = 27;
+  public int JJTCOMPLT = 28;
+  public int JJTADD = 29;
+  public int JJTSUBTRACT = 30;
+  public int JJTTIMES = 31;
+  public int JJTDIVIDE = 32;
+  public int JJTUNARYNOT = 33;
+  public int JJTUNARYPLUS = 34;
+  public int JJTUNARYMINUS = 35;
+  public int JJTINDEXEDEXPRESSION = 36;
+  public int JJTFNINVOKE = 37;
+  public int JJTMETHODINVOKE = 38;
+  public int JJTIDENTIFIER = 39;
+  public int JJTMEMIDENTIFIER = 40;
+  public int JJTDEREFERENCE = 41;
+  public int JJTCHARACTER = 42;
+  public int JJTINTEGER = 43;
+  public int JJTRATIONAL = 44;
+  public int JJTTRUE = 45;
+  public int JJTFALSE = 46;
 
 
   public String[] jjtNodeName = {
@@ -60,6 +63,7 @@ public interface RattleTreeConstants
     "ReturnExpression",
     "MemAssignment",
     "Assignment",
+    "MultiAssignment",
     "IfStatement",
     "ObjCreate",
     "MemInstantiate",
@@ -85,15 +89,17 @@ public interface RattleTreeConstants
     "UnaryNot",
     "UnaryPlus",
     "UnaryMinus",
+    "IndexedExpression",
     "FnInvoke",
     "MethodInvoke",
     "Identifier",
     "MemIdentifier",
     "Dereference",
     "Character",
-    "Number",
+    "Integer",
+    "Rational",
     "True",
     "False",
   };
 }
-/* JavaCC - OriginalChecksum=0315408b06c3b6ce76f56d8d4e48f5cd (do not edit this line) */
+/* JavaCC - OriginalChecksum=9f9518af2fb1a5ccc7e46224f1bd6bdd (do not edit this line) */

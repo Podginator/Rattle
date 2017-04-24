@@ -1,10 +1,10 @@
 package values;
 
-public class ValueNumber extends ValueAbstract {
+public class ValueRational extends ValueAbstract {
 
     private double internalValue;
 
-    public ValueNumber(double b) {
+    public ValueRational(double b) {
         internalValue = b;
     }
 
@@ -34,30 +34,40 @@ public class ValueNumber extends ValueAbstract {
     }
 
     public Value add(Value v) {
-        return new ValueNumber(internalValue + v.doubleValue());
+        return new ValueRational(internalValue + v.doubleValue());
+    }
+
+    @Override
+    public int longValue() {
+        return (int) internalValue;
     }
 
     public Value subtract(Value v) {
-        return new ValueNumber(internalValue - v.doubleValue());
+        return new ValueRational(internalValue - v.doubleValue());
     }
 
     public Value mult(Value v) {
-        return new ValueNumber(internalValue * v.doubleValue());
+        return new ValueRational(internalValue * v.doubleValue());
     }
 
     public Value div(Value v) {
-        return new ValueNumber(internalValue / v.doubleValue());
+        return new ValueRational(internalValue / v.doubleValue());
     }
 
     public Value unary_plus() {
-        return new ValueNumber(internalValue);
+        return new ValueRational(internalValue);
     }
 
     public Value unary_minus() {
-        return new ValueNumber(-internalValue);
+        return new ValueRational(-internalValue);
     }
 
     public String toString() {
         return "" + internalValue;
+    }
+
+    @Override
+    public Value clone() {
+        return new ValueRational(internalValue);
     }
 }

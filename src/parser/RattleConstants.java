@@ -47,81 +47,83 @@ public interface RattleConstants {
   /** RegularExpression Id. */
   int CREATE = 23;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 24;
+  int INTEGER_LITERAL = 24;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 25;
+  int DECIMAL_LITERAL = 25;
   /** RegularExpression Id. */
-  int OCTAL_LITERAL = 26;
+  int HEX_LITERAL = 26;
   /** RegularExpression Id. */
-  int FLOATING_POINT_LITERAL = 27;
+  int OCTAL_LITERAL = 27;
   /** RegularExpression Id. */
-  int EXPONENT = 28;
+  int FLOATING_POINT_LITERAL = 28;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 29;
+  int EXPONENT = 29;
   /** RegularExpression Id. */
-  int IDENTIFIER = 30;
+  int STRING_LITERAL = 30;
   /** RegularExpression Id. */
-  int LETTER = 31;
+  int IDENTIFIER = 31;
   /** RegularExpression Id. */
-  int DIGIT = 32;
+  int LETTER = 32;
   /** RegularExpression Id. */
-  int LPAREN = 33;
+  int DIGIT = 33;
   /** RegularExpression Id. */
-  int RPAREN = 34;
+  int LPAREN = 34;
   /** RegularExpression Id. */
-  int LBRACE = 35;
+  int RPAREN = 35;
   /** RegularExpression Id. */
-  int RBRACE = 36;
+  int LBRACE = 36;
   /** RegularExpression Id. */
-  int LBRACKET = 37;
+  int RBRACE = 37;
   /** RegularExpression Id. */
-  int RBRACKET = 38;
+  int LBRACKET = 38;
   /** RegularExpression Id. */
-  int SEMICOLON = 39;
+  int RBRACKET = 39;
   /** RegularExpression Id. */
-  int COMMA = 40;
+  int SEMICOLON = 40;
   /** RegularExpression Id. */
-  int DOT = 41;
+  int COMMA = 41;
   /** RegularExpression Id. */
-  int PP = 42;
+  int DOT = 42;
   /** RegularExpression Id. */
-  int MM = 43;
+  int PP = 43;
   /** RegularExpression Id. */
-  int ASSIGN = 44;
+  int MM = 44;
   /** RegularExpression Id. */
-  int PEQ = 45;
+  int ASSIGN = 45;
   /** RegularExpression Id. */
-  int MEQ = 46;
+  int PEQ = 46;
   /** RegularExpression Id. */
-  int UEQ = 47;
+  int MEQ = 47;
   /** RegularExpression Id. */
-  int EQ = 48;
+  int UEQ = 48;
   /** RegularExpression Id. */
-  int OBJDEREF = 49;
+  int EQ = 49;
   /** RegularExpression Id. */
-  int GT = 50;
+  int OBJDEREF = 50;
   /** RegularExpression Id. */
-  int LT = 51;
+  int GT = 51;
   /** RegularExpression Id. */
-  int LE = 52;
+  int LT = 52;
   /** RegularExpression Id. */
-  int GE = 53;
+  int LE = 53;
   /** RegularExpression Id. */
-  int NE = 54;
+  int GE = 54;
   /** RegularExpression Id. */
-  int HOOK = 55;
+  int NE = 55;
   /** RegularExpression Id. */
-  int COLON = 56;
+  int HOOK = 56;
   /** RegularExpression Id. */
-  int PLUS = 57;
+  int COLON = 57;
   /** RegularExpression Id. */
-  int SUBT = 58;
+  int PLUS = 58;
   /** RegularExpression Id. */
-  int STAR = 59;
+  int SUBT = 59;
   /** RegularExpression Id. */
-  int SLASH = 60;
+  int STAR = 60;
   /** RegularExpression Id. */
-  int REM = 61;
+  int SLASH = 61;
+  /** RegularExpression Id. */
+  int REM = 62;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -152,6 +154,7 @@ public interface RattleConstants {
     "\"RETURN\"",
     "\"QUIT\"",
     "\"CREATE\"",
+    "<INTEGER_LITERAL>",
     "<DECIMAL_LITERAL>",
     "<HEX_LITERAL>",
     "<OCTAL_LITERAL>",
