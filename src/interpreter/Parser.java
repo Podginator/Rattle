@@ -11,7 +11,6 @@ import java.util.List;
 
 public class Parser implements RattleVisitor {
 
-
     // Scope display handler
     private Display scope = Display.globalScope;
 
@@ -43,14 +42,18 @@ public class Parser implements RattleVisitor {
         return node.jjtGetChild(childIndex).jjtAccept(this, data);
     }
 
-    Value[] doChildMulti(SimpleNode node, int childIndex, Object data) {
+    // Name this better.
+    Value[] doChildRes(SimpleNode node, int childIndex, Object data) {
         Object childRes = node.jjtGetChild(childIndex).jjtAccept(this, data);
 
         if (childRes instanceof Value[]) {
             return (Value[]) childRes;
         }
 
-        return ((Value) childRes).tupleValue();
+        Value[] res = new Value[1];
+        res[0] = (Value) childRes;
+
+        return res;
     }
 
     // Execute all children of the given node
@@ -64,7 +67,7 @@ public class Parser implements RattleVisitor {
 
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
 
-            Value[] vals = doChildMulti(node, i, data);
+            Value[] vals = doChildRes(node, i, data);
 
             for (Value value : vals) {
                 val.add(value);
@@ -200,7 +203,7 @@ public class Parser implements RattleVisitor {
     public Object visit(ASTArgList node, Object data) {
         FunctionInvocation newInvocation = (FunctionInvocation) data;
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-            Value[] args = doChildMulti(node, i, null);
+            Value[] args = doChildRes(node, i, null);
             for (Value arg : args) {
                 newInvocation.setArgument(arg);
             }
@@ -264,7 +267,7 @@ public class Parser implements RattleVisitor {
         int i = 0;
         int j = 0;
         while (i < indexOfExpressions) {
-            Value[] vals = doChildMulti(node, indexOfExpressions + j, null);
+            Value[] vals = doChildRes(node, indexOfExpressions + j, null);
 
             for (Value val : vals) {
                 SimpleNode child = getChild(node, i);
@@ -303,7 +306,7 @@ public class Parser implements RattleVisitor {
 
     // Execute the WRITE statement
     public Object visit(ASTWrite node, Object data) {
-        Value[] vals = doChildMulti(node, 0, null);
+        Value[] vals = doChildRes(node, 0, null);
         boolean first = true;
 
         for (Value val : vals) {
@@ -388,8 +391,8 @@ public class Parser implements RattleVisitor {
 
     @Override
     public Object visit(ASTIndexedExpression node, Object data) {
-        int index = doChild(node, 1).intValue();
-        return doChildMulti(node, 0, data)[index];
+        int index = doChild(node, 1).longValue();
+        return doChildRes(node, 0, data)[index];
     }
 
     // Execute an assignment statement.
@@ -688,7 +691,7 @@ public class Parser implements RattleVisitor {
             throw new ExceptionSemantic("member " + memName + "  is undefined.");
         }
 
-        reference.setValue(doChildMulti(node, 1, null)[0]);
+        reference.setValue(doChildRes(node, 1, null)[0]);
         return data;
     }
 
@@ -733,21 +736,5 @@ public class Parser implements RattleVisitor {
 
         Value fnObj = new ValueFunction(currentFunctionDefinition);
         return fnObj;
-    }
-
-
-    @Override
-    public Object visit(ASTTupleDefine node, Object data) {
-        int numChildren = node.jjtGetNumChildren();
-        ArrayList<Value> vals = new ArrayList<>();
-        for (int i = 0; i < numChildren; i++) {
-            Value[] children = doChildMulti(node, i, data);
-
-            for (Value child : children) {
-                vals.add(child);
-            }
-        }
-
-        return new ValueTuple(vals);
     }
 }

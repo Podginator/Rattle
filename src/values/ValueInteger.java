@@ -13,7 +13,7 @@ public class ValueInteger extends ValueAbstract {
 	}
 	
 	/** Convert this to a primitive long. */
-	public int intValue() {
+	public int longValue() {
 		return internalValue;
 	}
 	
@@ -28,40 +28,40 @@ public class ValueInteger extends ValueAbstract {
 	}
 
 	public int compare(Value v) {
-		if (internalValue == v.intValue())
+		if (internalValue == v.longValue())
 			return 0;
-		else if (internalValue > v.intValue())
+		else if (internalValue > v.longValue())
 			return 1;
 		else
 			return -1;
 	}
 	
-	public Value add(Value lhs, Value v){
+	public Value add(Value v) {
 		if (v instanceof ValueInteger) {
-			return new ValueInteger(lhs.intValue() + v.intValue());
+			return new ValueInteger(internalValue + v.longValue());
 		}
 
-		return v.add(lhs, v);
+		return v.clone().add(this);
 	}
 
-	public Value subtract(Value lhs,Value v) {
+	public Value subtract(Value v) {
 		if (v instanceof ValueInteger) {
-			return new ValueInteger(v.intValue() - v.intValue());
+			return new ValueInteger(internalValue - v.longValue());
 		}
 
-		return v.subtract(lhs, v);
+		return v.clone().subtract(this);
 	}
 
-	public Value mult(Value lhs,Value v) {
+	public Value mult(Value v) {
 		if (v instanceof ValueInteger) {
-			return new ValueInteger(lhs.intValue() * v.intValue());
+			return new ValueInteger(internalValue * v.longValue());
 		}
 
-		return v.mult(lhs, v);
+		return v.clone().mult(this);
 	}
 
-	public Value div(Value lhs, Value v) {
-		return new ValueRational(lhs.doubleValue()/ v.doubleValue());
+	public Value div(Value v) {
+		return new ValueRational(internalValue / v.longValue());
 	}
 
 	public Value unary_plus() {
@@ -76,4 +76,8 @@ public class ValueInteger extends ValueAbstract {
 		return "" + internalValue;
 	}
 
+	@Override
+	public Value clone() {
+		return new ValueInteger(internalValue);
+	}
 }

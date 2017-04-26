@@ -51,9 +51,4 @@ public class ValueFunction extends ValueAbstract {
     public int compare(Value v) {
         return 0;
     }
-
-    public String toString() {
-        return "Lambda";
-    }
-
 }

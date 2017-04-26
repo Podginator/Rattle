@@ -33,25 +33,25 @@ public class ValueRational extends ValueAbstract {
             return -1;
     }
 
-    public Value add(ValueRational lhs, Value v) {
-        return new ValueRational(lhs.internalValue + v.doubleValue());
+    public Value add(Value v) {
+        return new ValueRational(internalValue + v.doubleValue());
     }
 
     @Override
-    public int intValue() {
+    public int longValue() {
         return (int) internalValue;
     }
 
-    public Value subtract(Value lhs, Value v) {
-        return new ValueRational(lhs.doubleValue() - v.doubleValue());
+    public Value subtract(Value v) {
+        return new ValueRational(internalValue - v.doubleValue());
     }
 
-    public Value mult(Value lhs, Value v) {
-        return new ValueRational(lhs.doubleValue() * v.doubleValue());
+    public Value mult(Value v) {
+        return new ValueRational(internalValue * v.doubleValue());
     }
 
-    public Value div(Value lhs, Value v) {
-        return new ValueRational(lhs.doubleValue() / v.doubleValue());
+    public Value div(Value v) {
+        return new ValueRational(internalValue / v.doubleValue());
     }
 
     public Value unary_plus() {
@@ -66,4 +66,8 @@ public class ValueRational extends ValueAbstract {
         return "" + internalValue;
     }
 
+    @Override
+    public Value clone() {
+        return new ValueRational(internalValue);
+    }
 }

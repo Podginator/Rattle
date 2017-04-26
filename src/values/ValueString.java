@@ -33,12 +33,16 @@ public class ValueString extends ValueAbstract {
     /**
      * Add performs string concatenation.
      */
-    public Value add(Value lhs, Value rhs) {
-        return new ValueString(lhs.stringValue() + rhs.stringValue());
+    public Value add(Value v) {
+        return new ValueString(internalValue + v.stringValue());
     }
 
     public String toString() {
         return internalValue;
     }
 
+    @Override
+    public Value clone() {
+        return new ValueString(internalValue);
+    }
 }

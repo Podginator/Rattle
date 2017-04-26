@@ -12,142 +12,110 @@ public interface Value {
     /**
      * Get name of this Value type.
      */
-    String getName();
+    public String getName();
 
     /**
      * Perform logical OR on this value and another.
      */
-    Value or(Value v);
+    public Value or(Value v);
 
     /**
      * Perform logical AND on this value and another.
      */
-    Value and(Value v);
+    public Value and(Value v);
 
     /**
      * Perform logical NOT on this value.
      */
-    Value not();
+    public Value not();
 
     /**
      * Compare this value and another.
      */
-    int compare(Value v);
+    public int compare(Value v);
 
     /**
      * Add this value to another.
      */
-    Value add(Value lhs, Value v);
+    public Value add(Value v);
 
     /**
      * Subtract another value from this.
      */
-    Value subtract(Value lhs, Value v);
+    public Value subtract(Value v);
 
     /**
      * Multiply this value with another.
      */
-    Value mult(Value lhs, Value v);
+    public Value mult(Value v);
 
     /**
      * Divide another value by this.
      */
-    Value div(Value lhs, Value v);
-
-    /**
-     * Add this value to another.
-     */
-    Value add(Value v);
-
-    /**
-     * Subtract another value from this.
-     */
-    Value subtract(Value v);
-
-    /**
-     * Multiply this value with another.
-     */
-    Value mult(Value v);
-
-    /**
-     * Divide another value by this.
-     */
-    Value div(Value v);
-
+    public Value div(Value v);
 
     /**
      * Return unary plus of this value.
      */
-    Value unary_plus();
+    public Value unary_plus();
 
     /**
      * Return unary minus of this value.
      */
-    Value unary_minus();
+    public Value unary_minus();
 
     /**
      * Convert this to a primitive boolean.
      */
-    boolean booleanValue();
+    public boolean booleanValue();
 
 
     /**
      * Convert this to a primitive double.
      */
-    double doubleValue();
+    public double doubleValue();
 
 
-    /**
-     * Convert to a Primitive int
-     * @return integer value of htis.
-     */
-    int intValue();
+    public int longValue();
 
     /**
      * Convert this to a primitive string.
      */
-    String stringValue();
+    public String stringValue();
 
-    /**
-     * Convert to a class instance
-     * @return The class instance of this object.
-     */
-    ClassDefinition.ClassInstance objValue();
-
-    /**
-     * Convert to a tuple
-     */
-    Value[] tupleValue();
+    public ClassDefinition.ClassInstance objValue();
 
     /**
      * Test this value and another for equality.
      */
-    Value eq(Value v);
+    public Value eq(Value v);
 
     /**
      * Test this value and another for non-equality.
      */
-    Value neq(Value v);
+    public Value neq(Value v);
 
     /**
      * Test this value and another for >=
      */
-    Value gte(Value v);
+    public Value gte(Value v);
 
     /**
      * Test this value and another for <=
      */
-    Value lte(Value v);
+    public Value lte(Value v);
 
     /**
      * Test this value and another for >
      */
-    Value gt(Value v);
+    public Value gt(Value v);
 
     /**
      * Test this value and another for <
      */
-    Value lt(Value v);
+    public Value lt(Value v);
 
+
+    public Value clone();
 
 }
