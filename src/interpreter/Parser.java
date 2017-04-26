@@ -646,7 +646,10 @@ public class Parser implements RattleVisitor {
         Value[] val = instance.executeMethod(newInvocation, this);
         scope = globalScope;
 
-        return val == null ? data : val;
+        if (val != null) {
+            return  val.length == 1 ? val[0] : val;
+        }
+        return data;
     }
 
     @Override
