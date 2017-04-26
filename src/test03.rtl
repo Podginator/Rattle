@@ -1,0 +1,27 @@
+
+a = () -> { return 2, 3, 4 }
+
+tuple = [1, a(), 5]
+tuple2 = [6, 7, 8]
+tuple3 = tuple+tuple2
+normalval = 9
+tuple4 = tuple+tuple2+normalval
+multi_tuple = ['a', "Tom", 4, 4.2, (x)->{return x*2}]
+expression_test = [1*2, 1.5*2, 2*1.7, "To" + 2, 2+"To", 2/1.5, [2,4,5]+[1,2,3]]
+expression_test = [2,4,9] + expression_test
+
+
+print "TUPLE ::"
+print tuple
+print "Tuple 2 ::"
+print tuple2
+print "Tuple 3 (tuple + tuple2) ::"
+print tuple3
+print "Tuple 4 (tuple + tuple2 + normalval)"
+print tuple4
+print "Multi Tuple"
+print multi_tuple
+print "expression_test"
+print expression_test
+
+

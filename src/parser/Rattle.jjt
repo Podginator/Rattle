@@ -364,6 +364,15 @@ void member_assignment()  #MemAssignment(2) :
   ]
 }
 
+// A tuple is defined as one or more
+// expressions that form values.
+void tuple_define() #TupleDefine :
+{}
+{
+    "[" expression() (","expression())* "]"
+}
+
+
 void assignment() #Assignment :
 {}
 {
@@ -576,6 +585,8 @@ void primary_expression() :
           literal()
         | LOOKAHEAD(lambda_define())
           lambda_define()
+        | LOOKAHEAD(tuple_define())
+             tuple_define()
         | LOOKAHEAD(fn_invoke())
           fn_invoke()
         | LOOKAHEAD(method_invoke())

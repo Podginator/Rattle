@@ -607,6 +607,41 @@ void member_assignment()                    :
 /*@egen*/
 }
 
+// A tuple is defined as one or more
+// expressions that form values.
+void tuple_define()              :
+{/*@bgen(jjtree) TupleDefine */
+  ASTTupleDefine jjtn000 = new ASTTupleDefine(JJTTUPLEDEFINE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) TupleDefine */
+    try {
+/*@egen*/
+    "[" expression() (","expression())* "]"/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+
 void assignment()             :
 {/*@bgen(jjtree) Assignment */
   ASTAssignment jjtn000 = new ASTAssignment(JJTASSIGNMENT);
@@ -1537,6 +1572,8 @@ void primary_expression() :
           literal()
         | LOOKAHEAD(lambda_define())
           lambda_define()
+        | LOOKAHEAD(tuple_define())
+             tuple_define()
         | LOOKAHEAD(fn_invoke())
           fn_invoke()
         | LOOKAHEAD(method_invoke())

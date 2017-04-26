@@ -1,1 +1,1 @@
-java -cp /Users/podginator/LanguageDesign/javacc-6.0/bin/lib/javacc.jar $(basename $0) "$@"
+java -cp ./javacc-6.0/bin/lib/javacc.jar $(basename $0) "$@"

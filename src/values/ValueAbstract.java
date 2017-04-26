@@ -21,20 +21,20 @@ public abstract class ValueAbstract implements Value {
         throw new ExceptionSemantic("Cannot perform NOT on " + getName());
     }
 
-    public Value add(Value v) {
-        throw new ExceptionSemantic("Cannot perform + on " + getName() + " and " + v.getName());
+    public Value add(Value lhs, Value rhs) {
+        throw new ExceptionSemantic("Cannot perform + on " + lhs.getName() + " and " + rhs.getName());
     }
 
-    public Value subtract(Value v) {
-        throw new ExceptionSemantic("Cannot perform - on " + getName() + " and " + v.getName());
+    public Value subtract(Value lhs, Value rhs){
+        throw new ExceptionSemantic("Cannot perform - on " + lhs.getName() + " and " + rhs.getName());
     }
 
-    public Value mult(Value v) {
-        throw new ExceptionSemantic("Cannot perform * on " + getName() + " and " + v.getName());
+    public Value mult(Value lhs, Value rhs){
+        throw new ExceptionSemantic("Cannot perform * on " + lhs.getName() + " and " + rhs.getName());
     }
 
-    public Value div(Value v) {
-        throw new ExceptionSemantic("Cannot perform / on " + getName() + " and " + v.getName());
+    public Value div(Value lhs, Value rhs){
+        throw new ExceptionSemantic("Cannot perform / on " + getName() + " and " + rhs.getName());
     }
 
     public Value unary_plus() {
@@ -52,13 +52,37 @@ public abstract class ValueAbstract implements Value {
         throw new ExceptionSemantic("Cannot convert " + getName() + " to boolean.");
     }
 
+    /**
+     * By default we just return an array of itself
+     * @return
+     */
+    public Value[] tupleValue() {
+        return new Value[] { this };
+    }
+
+
     @Override
-    public Value clone() {
-        throw new ExceptionSemantic("Cannot perform operation on this primitive");
+    public Value add(Value v) {
+        return add(this, v);
     }
 
     @Override
-    public int longValue() {
+    public Value subtract(Value v) {
+        return add(this, v);
+    }
+
+    @Override
+    public Value mult(Value v) {
+        return mult(this, v);
+    }
+
+    @Override
+    public Value div(Value v) {
+        return div(this, v);
+    }
+
+    @Override
+    public int intValue() {
         throw new ExceptionSemantic("Cannot convert " + getName() + " to int.");
     }
 
