@@ -33,8 +33,12 @@ public class ValueRational extends ValueAbstract {
             return -1;
     }
 
-    public Value add(ValueRational lhs, Value v) {
-        return new ValueRational(lhs.internalValue + v.doubleValue());
+    public Value add(Value v) {
+        if (v instanceof ValueInteger || v instanceof ValueRational) {
+            return new ValueRational(internalValue + v.doubleValue());
+        }
+
+        return ValueFactory.ConvertValue(v.getClass(), this).add(v);
     }
 
     @Override
@@ -42,16 +46,23 @@ public class ValueRational extends ValueAbstract {
         return (int) internalValue;
     }
 
-    public Value subtract(Value lhs, Value v) {
-        return new ValueRational(lhs.doubleValue() - v.doubleValue());
+    public Value subtract(Value v) {
+        if (v instanceof ValueInteger || v instanceof ValueRational) {
+            return new ValueRational(internalValue - v.doubleValue());
+        }
+
+        return ValueFactory.ConvertValue(v.getClass(), this).subtract(v);    }
+
+    public Value mult(Value v) {
+        if (v instanceof ValueInteger || v instanceof ValueRational) {
+            return new ValueRational(internalValue * v.doubleValue());
+        }
+
+        return ValueFactory.ConvertValue(v.getClass(), this).mult(v);
     }
 
-    public Value mult(Value lhs, Value v) {
-        return new ValueRational(lhs.doubleValue() * v.doubleValue());
-    }
-
-    public Value div(Value lhs, Value v) {
-        return new ValueRational(lhs.doubleValue() / v.doubleValue());
+    public Value div(Value v) {
+        return new ValueRational(internalValue / v.doubleValue());
     }
 
     public Value unary_plus() {

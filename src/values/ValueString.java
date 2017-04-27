@@ -26,6 +26,17 @@ public class ValueString extends ValueAbstract {
         return internalValue;
     }
 
+    public int intValue() {
+        int retVal = -1;
+        try {
+            retVal = Integer.parseInt(internalValue);
+        } catch (NumberFormatException e) {
+            return super.intValue();
+        }
+
+        return retVal;
+    }
+
     public int compare(Value v) {
         return internalValue.compareTo(v.stringValue());
     }
@@ -33,8 +44,18 @@ public class ValueString extends ValueAbstract {
     /**
      * Add performs string concatenation.
      */
-    public Value add(Value lhs, Value rhs) {
-        return new ValueString(lhs.stringValue() + rhs.stringValue());
+    @Override
+    public Value add(Value rhs) {
+        return new ValueString(stringValue() + rhs.stringValue());
+    }
+
+
+    public Value mult(Value rhs) {
+        String newStr = "";
+        for (int i = 0; i < rhs.intValue(); i++) {
+            newStr += internalValue;
+        }
+        return new ValueString(newStr);
     }
 
     public String toString() {

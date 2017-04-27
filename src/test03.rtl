@@ -1,11 +1,16 @@
 
 a = () -> { return 2, 3, 4 }
 
+print 2.4 + [1,2,3]
+print 2 * "Tom"
+print 4 * "Jerry"
+print ["Tom", "And", "Jerry"] +  "Kids" * 6
+
 tuple = [1, a(), 5]
 tuple2 = [6, 7, 8]
 tuple3 = tuple+tuple2
 normalval = 9
-tuple4 = tuple+tuple2+normalval
+tuple4 = tuple + tuple2 + normalval
 multi_tuple = ['a', "Tom", 4, 4.2, (x)->{return x*2}]
 expression_test = [1*2, 1.5*2, 2*1.7, "To" + 2, 2+"To", 2/1.5, [2,4,5]+[1,2,3]]
 expression_test = [2,4,9] + expression_test

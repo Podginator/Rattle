@@ -34,25 +34,6 @@ public interface Value {
      */
     int compare(Value v);
 
-    /**
-     * Add this value to another.
-     */
-    Value add(Value lhs, Value v);
-
-    /**
-     * Subtract another value from this.
-     */
-    Value subtract(Value lhs, Value v);
-
-    /**
-     * Multiply this value with another.
-     */
-    Value mult(Value lhs, Value v);
-
-    /**
-     * Divide another value by this.
-     */
-    Value div(Value lhs, Value v);
 
     /**
      * Add this value to another.

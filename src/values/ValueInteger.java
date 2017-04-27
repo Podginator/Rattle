@@ -36,32 +36,35 @@ public class ValueInteger extends ValueAbstract {
 			return -1;
 	}
 	
-	public Value add(Value lhs, Value v){
+	public Value add(Value v){
 		if (v instanceof ValueInteger) {
-			return new ValueInteger(lhs.intValue() + v.intValue());
+			return new ValueInteger(internalValue + v.intValue());
 		}
 
-		return v.add(lhs, v);
+
+		return ValueFactory.ConvertValue(v.getClass(), this).add(v);
 	}
 
-	public Value subtract(Value lhs,Value v) {
+	public Value subtract(Value v) {
 		if (v instanceof ValueInteger) {
-			return new ValueInteger(v.intValue() - v.intValue());
+			return new ValueInteger(internalValue - v.intValue());
 		}
 
-		return v.subtract(lhs, v);
+
+		return ValueFactory.ConvertValue(v.getClass(), this).subtract(v);
 	}
 
-	public Value mult(Value lhs,Value v) {
+	public Value mult(Value v) {
 		if (v instanceof ValueInteger) {
-			return new ValueInteger(lhs.intValue() * v.intValue());
+			return new ValueInteger(internalValue * v.intValue());
 		}
 
-		return v.mult(lhs, v);
+		// This operation is transitive, 2.4*2 == 2*2.4. We also define some other operations with it.
+		return v.mult(this);
 	}
 
-	public Value div(Value lhs, Value v) {
-		return new ValueRational(lhs.doubleValue()/ v.doubleValue());
+	public Value div(Value v) {
+		return new ValueRational(doubleValue() / v.doubleValue());
 	}
 
 	public Value unary_plus() {

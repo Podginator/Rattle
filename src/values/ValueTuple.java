@@ -1,12 +1,8 @@
 package values;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-/**
- * Created by podginator on 24/04/2017.
- */
 public class ValueTuple extends ValueAbstract  {
 
     private ArrayList<Value> internalValues;
@@ -30,14 +26,10 @@ public class ValueTuple extends ValueAbstract  {
     }
 
     @Override
-    public Value add(Value lhs, Value rhs) {
-        Value[] lhsVals = lhs.tupleValue();
+    public Value add(Value rhs) {
         Value[] rhsVals = rhs.tupleValue();
-        ArrayList<Value> vals = new ArrayList<>();
+        ArrayList<Value> vals = (ArrayList<Value>)internalValues.clone();
 
-        for (Value value : lhsVals) {
-            vals.add(value);
-        }
         for (Value value : rhsVals) {
             vals.add(value);
         }
