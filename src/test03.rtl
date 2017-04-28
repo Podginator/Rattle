@@ -1,6 +1,9 @@
 
 a = () -> { return 2, 3, 4 }
+b = (x, y, z) -> { return x, y, z }
 
+
+print b(a())
 print 2.4 + [1,2,3]
 print 2 * "Tom"
 print 4 * "Jerry"

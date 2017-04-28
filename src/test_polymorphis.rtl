@@ -1,0 +1,27 @@
+class firstTest {
+    a = 1
+
+    def printGoodbye() {
+        print "First Test A: " + a
+    }
+}
+
+
+class secondTest extends firstTest {
+    a = 2
+
+    def printGoodbye() {
+        print "Second Test A " + a
+    }
+}
+
+firstTest_instance = {create firstTest}
+
+secondTest_instance = {create secondTest}
+
+dynamic_instantiation = {create firstTest where a = 3}
+
+
+firstTest_instance->printGoodbye()
+secondTest_instance->printGoodbye()
+dynamic_instantiation->printGoodbye()

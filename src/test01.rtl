@@ -1,8 +1,20 @@
 // Test multiple inheritance. Hello Extends Test extends First Test
 class firstTest {
+    a = 12
+
     def printGoodbye() {
-        print "Can you save my heavydirtysoul?"
+        print "First Test A: " + a
     }
+}
+
+
+class secondTest extends firstTest {
+    a = 13
+
+    def printGoodbye() {
+        print "Second Test A " + a
+    }
+
 }
 
 // Test multiple inheritance
