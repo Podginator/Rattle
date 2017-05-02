@@ -178,9 +178,9 @@ public class Parser implements RattleVisitor {
         if (fndefs.size() > 1) {
             for (int i = 1; i < fndefs.size(); i++) {
                 final Value[] rets = retVal;
-                final int a = i;
+                final int j = i;
                 retVal = (Value[]) PerformInScope(fndefs.get(i).getScope(), () -> {
-                    FunctionInvocation newInv = new FunctionInvocation(fndefs.get(a));
+                    FunctionInvocation newInv = new FunctionInvocation(fndefs.get(j));
                     for (Value value : rets) {
                         newInv.setArgument(value);
                     }
@@ -757,11 +757,12 @@ public class Parser implements RattleVisitor {
     }
 
 
-    // Perform
+    // Perform a new scope.
     private Object PerformInNewScope(ScopePerformer runner) {
         return PerformInScope(new Display(scope), runner);
     }
 
+    // Perform In the specified scope, then return to the eold one.
     private Object PerformInScope(Display scopeRunner, ScopePerformer runner) {
         Display oldScope = scope;
         scope = scopeRunner;

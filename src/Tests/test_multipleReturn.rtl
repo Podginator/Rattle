@@ -12,12 +12,10 @@ class MultiReturnObject {
     }
 }
 
-
 print singleReturn()
 print twoReturn()
 
-def expectFiveParams(a,b,c,d,e)
-{
+def expectFiveParams(a,b,c,d,e) {
     return a,b,c,d,e
 }
 
@@ -31,13 +29,10 @@ print c
 print d
 print expectFiveParams(DifferReturnType(), 7)
 
-
-
 obj = {create MultiReturnObject}
 print obj->threeReturn()
 
 print DifferReturnType()
-
 
 def test_mutable(a) {
     a = 12
