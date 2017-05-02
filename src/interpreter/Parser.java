@@ -153,7 +153,6 @@ public class Parser implements RattleVisitor {
 
         // Child 0 - identifier (fn name)
         String fnname = getTokenOfChild(node, 0);
-
         FunctionDefinition def = scope.findFunction(fnname);
 
         // Check for lambda, this should be done after we see if a function by that name exists, I think.
@@ -170,25 +169,25 @@ public class Parser implements RattleVisitor {
 
         if (fndefs.size() == 0)
             throw new ExceptionSemantic("Function " + fnname + " is undefined.");
-        // Save it for next time
-
 
         FunctionInvocation newInvocation = new FunctionInvocation(fndefs.get(0));
         doChild(node, 1, newInvocation);
         Value[] retVal = fndefs.get(0).hasReturn() ? scope.execute(newInvocation, this) : null;
 
         // Then do the rest.
-        for (int i = 1; i < fndefs.size(); i++) {
-            Display globalScope = scope;
-            scope = fndefs.get(i).getScope();
-            newInvocation = new FunctionInvocation(fndefs.get(i));
-            for (Value value : retVal) {
-                newInvocation.setArgument(value);
+        if (fndefs.size() > 1) {
+            for (int i = 1; i < fndefs.size(); i++) {
+                final Value[] rets = retVal;
+                final int a = i;
+                retVal = (Value[]) PerformInScope(fndefs.get(i).getScope(), () -> {
+                    FunctionInvocation newInv = new FunctionInvocation(fndefs.get(a));
+                    for (Value value : rets) {
+                        newInv.setArgument(value);
+                    }
+                    return scope.execute(newInv, this);
+                });
             }
-            retVal = scope.execute(newInvocation, this);
-            scope = globalScope;
         }
-
 
         if (retVal != null) {
             return  retVal.length == 1 ? retVal[0] : retVal;
@@ -215,29 +214,39 @@ public class Parser implements RattleVisitor {
         Value hopefullyValueBoolean = doChild(node, 0);
         if (!(hopefullyValueBoolean instanceof ValueBoolean))
             throw new ExceptionSemantic("The test expression of an if statement must be boolean.");
-        if (((ValueBoolean) hopefullyValueBoolean).booleanValue())
-            doChild(node, 1, null);                            // if(true), therefore do 'if' statement
-        else if (node.ifHasElse)                        // does it have an else statement?
-            doChild(node, 2, null);                            // if(false), therefore do 'else' statement
+
+        PerformInNewScope(() -> {
+            if (((ValueBoolean) hopefullyValueBoolean).booleanValue())
+                    doChild(node, 1, null);                            // if(true), therefore do 'if' statement
+                else if (node.ifHasElse)                        // does it have an else statement?
+                    doChild(node, 2, null);                            // if(false), therefore do 'else' statement
+
+                return null;
+        });
         return data;
+
     }
 
     // Execute a FOR loop
     public Object visit(ASTForLoop node, Object data) {
         // loop initialisation
         doChild(node, 0, null);
-        while (true) {
-            // evaluate loop test
-            Value hopefullyValueBoolean = doChild(node, 1);
-            if (!(hopefullyValueBoolean instanceof ValueBoolean))
-                throw new ExceptionSemantic("The test expression of a for loop must be boolean.");
-            if (!((ValueBoolean) hopefullyValueBoolean).booleanValue())
-                break;
-            // do loop statement
-            doChild(node, 3, null);
-            // assign loop increment
-            doChild(node, 2, null);
-        }
+        PerformInNewScope(()-> {
+            while (true) {
+                // evaluate loop test
+                Value hopefullyValueBoolean = doChild(node, 1);
+                if (!(hopefullyValueBoolean instanceof ValueBoolean))
+                    throw new ExceptionSemantic("The test expression of a for loop must be boolean.");
+                if (!((ValueBoolean) hopefullyValueBoolean).booleanValue())
+                    break;
+                // do loop statement
+                doChild(node, 3, null);
+                // assign loop increment
+                doChild(node, 2, null);
+            }
+
+            return null;
+        });
         return data;
     }
 
@@ -532,16 +541,20 @@ public class Parser implements RattleVisitor {
 
     @Override
     public Object visit(ASTWhileLoop node, Object data) {
-        while (true) {
-            // evaluate loop test
-            Value hopefullyValueBoolean = doChild(node, 0);
-            if (!(hopefullyValueBoolean instanceof ValueBoolean))
-                throw new ExceptionSemantic("The test expression of a for loop must be boolean.");
-            if (!((ValueBoolean) hopefullyValueBoolean).booleanValue())
-                break;
-            // do loop statement
-            doChild(node, 1, null);
-        }
+        PerformInNewScope(()->{
+            while (true) {
+                // evaluate loop test
+                Value hopefullyValueBoolean = doChild(node, 0);
+                if (!(hopefullyValueBoolean instanceof ValueBoolean))
+                    throw new ExceptionSemantic("The test expression of a for loop must be boolean.");
+                if (!((ValueBoolean) hopefullyValueBoolean).booleanValue())
+                    break;
+                // do loop statement
+                doChild(node, 1, null);
+            }
+
+            return null;
+        });
         return data;
     }
 
@@ -604,7 +617,6 @@ public class Parser implements RattleVisitor {
 
     @Override
     public Object visit(ASTMethodInvoke node, Object data) {
-        FunctionDefinition fndef;
 
         String className = getTokenOfChild(node, 0);
         Reference ref = scope.findReference(className);
@@ -625,23 +637,20 @@ public class Parser implements RattleVisitor {
         }
 
         ClassInstance instance = ref.getValue().objValue();
-        // Swap out the scopes while we perform object code. (this is likely the issue isn't it?)
-        Display globalScope = scope;
-        scope = instance.getScope();
+        Value[] val = (Value[]) PerformInScope(instance.getScope(), ()-> {
+            String methodName = getTokenOfChild(node, nodesBeforeMethod);
+            FunctionDefinition fndef = instance.findMethod(methodName);
 
-        String methodName = getTokenOfChild(node, nodesBeforeMethod);
-        fndef = instance.findMethod(methodName);
+            if (fndef == null)
+                throw new ExceptionSemantic("Method " + methodName + " is undefined.");
 
-        if (fndef == null)
-            throw new ExceptionSemantic("Method " + methodName + " is undefined.");
+            FunctionInvocation newInvocation = new FunctionInvocation(fndef);
 
-        FunctionInvocation newInvocation = new FunctionInvocation(fndef);
+            // Child 1 - arglist
+            doChild(node, 2, newInvocation);
 
-        // Child 1 - arglist
-        doChild(node, 2, newInvocation);
-
-        Value[] val = instance.executeMethod(newInvocation, this);
-        scope = globalScope;
+            return instance.executeMethod(newInvocation, this);
+        });
 
         if (val != null) {
             return  val.length == 1 ? val[0] : val;
@@ -708,11 +717,7 @@ public class Parser implements RattleVisitor {
         // Child 1 - arglist
         doChild(node, 1, newInvocation);
 
-        // Execute
-        Display currScope = scope;
-        scope = instance.getScope();
-        Object retVal = instance.executeMethod(newInvocation, this);
-        scope = currScope;
+        Object retVal = PerformInScope(instance.getScope(), ()-> instance.executeMethod(newInvocation, this));
 
         return reference.hasReturn() ? retVal : data;
     }
@@ -749,5 +754,20 @@ public class Parser implements RattleVisitor {
         }
 
         return new ValueTuple(vals);
+    }
+
+
+    // Perform
+    private Object PerformInNewScope(ScopePerformer runner) {
+        return PerformInScope(new Display(scope), runner);
+    }
+
+    private Object PerformInScope(Display scopeRunner, ScopePerformer runner) {
+        Display oldScope = scope;
+        scope = scopeRunner;
+        Object ret = runner.doAndReturn();
+        scope = oldScope;
+
+        return ret;
     }
 }

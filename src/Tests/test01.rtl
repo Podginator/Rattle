@@ -120,6 +120,7 @@ print i->name
 
 // This simple lambda returns two things, so to get both values from it we'd have to say a,b =
 simpleLambda = (x,y) -> { return y + x, x / y }
+print i->name
 a,b = simpleLambda(1,2)
 print "return 1 of simpleLambda: " + a
 print "return 2 of simple Lambda: " + b
@@ -147,7 +148,7 @@ print "i->operateOnCounter(x,y) where x =  lambda curried to do x * 4 * 8 * 16, 
 
 
 multiLambdaA = (x,y)->{return x * 2, y /2 }
-multiLambdaB = (x,y)->{return x * 4, y / 4 }
+multiLambdaB = (x,y)->{return (x + y)* 4 }
 multiLambdaD = multiLambdaA + multiLambdaB
 
 resultA, resultB = multiLambdaD(1,2)
