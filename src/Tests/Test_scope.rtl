@@ -3,8 +3,28 @@ if (2 > 1) {
     a = 7
 }
 
+print a
+
+if (1 > 2) {
+    a = 1
+} else {
+    a = 1
+}
+
+print a
+
 for (i = 0; i < 10; i = i + 1) {
     print i
     a = 1
 }
 
+print a
+
+i = 0
+while ( i < 10 ) {
+    print i
+    i = i + 1
+    a = 12
+}
+
+print a
