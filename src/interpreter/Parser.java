@@ -710,7 +710,7 @@ public class Parser implements RattleVisitor {
         reference = instance.findMethod(methodName);
         // If the reference is the global scope we're not referring to a member anymore.
         if (reference == null) {
-            throw new ExceptionSemantic("can not find method x");
+            throw new ExceptionSemantic("can not find method " + methodName);
         }
 
         FunctionInvocation newInvocation = new FunctionInvocation(reference);
@@ -758,12 +758,12 @@ public class Parser implements RattleVisitor {
 
 
     // Perform a new scope.
-    private Object PerformInNewScope(ScopePerformer runner) {
+    private Object PerformInNewScope(ScopeRunner runner) {
         return PerformInScope(new Display(scope), runner);
     }
 
     // Perform In the specified scope, then return to the eold one.
-    private Object PerformInScope(Display scopeRunner, ScopePerformer runner) {
+    private Object PerformInScope(Display scopeRunner, ScopeRunner runner) {
         Display oldScope = scope;
         scope = scopeRunner;
         Object ret = runner.doAndReturn();
