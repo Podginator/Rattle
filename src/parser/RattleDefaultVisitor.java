@@ -36,6 +36,9 @@ public class RattleDefaultVisitor implements RattleVisitor{
   public Object visit(ASTMemAssignment node, Object data){
     return defaultVisit(node, data);
   }
+  public Object visit(ASTFileLoad node, Object data){
+    return defaultVisit(node, data);
+  }
   public Object visit(ASTTupleDefine node, Object data){
     return defaultVisit(node, data);
   }
@@ -151,4 +154,4 @@ public class RattleDefaultVisitor implements RattleVisitor{
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=947372b5b73f8e3bf749cab4fae7bbd6 (do not edit this line) */
+/* JavaCC - OriginalChecksum=b164d986d7c63c5d72495174a95546a0 (do not edit this line) */

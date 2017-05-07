@@ -85,7 +85,7 @@ TOKEN [ IGNORE_CASE ] : /* RESERVED WORDS AND LITERALS */
 | < ELSE : "ELSE" >
 | < FOR : "FOR" >
 | < WHILE : "WHILE" >
-| < PRINT : "PRINT" >
+| < PRINT : "WRITE" >
 | < OR : "OR" >
 | < AND : "AND" >
 | < NOT : "NOT" >
@@ -364,6 +364,15 @@ void member_assignment()  #MemAssignment(2) :
   ]
 }
 
+
+
+// Load a file.
+void file_load() #FileLoad :
+{}
+{
+    "file::(" character() ")"
+}
+
 // A tuple is defined as one or more
 // expressions that form values.
 void tuple_define() #TupleDefine :
@@ -381,7 +390,7 @@ void assignment() #Assignment :
           | LOOKAHEAD(1)identifier()
         )
             "="
-            (expression())
+            (LOOKAHEAD(expression()) expression() | LOOKAHEAD(file_load()) file_load())
 
 }
 
@@ -485,10 +494,10 @@ void whileloop() #WhileLoop :
   < WHILE > "(" expression() ")" statement()
 }
 
-void write() :
+void write() #Write :
 {}
 {
-  < PRINT > expression() #Write(1)
+  < PRINT > expression() [ LOOKAHEAD(file_load()) file_load() | LOOKAHEAD(dereference()) dereference() ]
 }
 
 void arglist() #ArgList :

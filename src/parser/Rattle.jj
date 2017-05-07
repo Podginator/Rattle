@@ -89,7 +89,7 @@ TOKEN [ IGNORE_CASE ] : /* RESERVED WORDS AND LITERALS */
 | < ELSE : "ELSE" >
 | < FOR : "FOR" >
 | < WHILE : "WHILE" >
-| < PRINT : "PRINT" >
+| < PRINT : "WRITE" >
 | < OR : "OR" >
 | < AND : "AND" >
 | < NOT : "NOT" >
@@ -607,6 +607,41 @@ void member_assignment()                    :
 /*@egen*/
 }
 
+
+
+// Load a file.
+void file_load()           :
+{/*@bgen(jjtree) FileLoad */
+  ASTFileLoad jjtn000 = new ASTFileLoad(JJTFILELOAD);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) FileLoad */
+    try {
+/*@egen*/
+    "file::(" character() ")"/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
 // A tuple is defined as one or more
 // expressions that form values.
 void tuple_define()              :
@@ -656,7 +691,7 @@ void assignment()             :
           | LOOKAHEAD(1)identifier()
         )
             "="
-            (expression())/*@bgen(jjtree)*/
+            (LOOKAHEAD(expression()) expression() | LOOKAHEAD(file_load()) file_load())/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -988,37 +1023,36 @@ void whileloop()            :
 /*@egen*/
 }
 
-void write() :
-{}
-{
-  < PRINT >/*@bgen(jjtree) #Write( 1) */
-            {
-              ASTWrite jjtn001 = new ASTWrite(JJTWRITE);
-              boolean jjtc001 = true;
-              jjtree.openNodeScope(jjtn001);
-            }
-            try {
-/*@egen*/ expression()/*@bgen(jjtree)*/
-            } catch (Throwable jjte001) {
-              if (jjtc001) {
-                jjtree.clearNodeScope(jjtn001);
-                jjtc001 = false;
-              } else {
-                jjtree.popNode();
-              }
-              if (jjte001 instanceof RuntimeException) {
-                throw (RuntimeException)jjte001;
-              }
-              if (jjte001 instanceof ParseException) {
-                throw (ParseException)jjte001;
-              }
-              throw (Error)jjte001;
-            } finally {
-              if (jjtc001) {
-                jjtree.closeNodeScope(jjtn001,  1);
-              }
-            }
-/*@egen*/          
+void write()        :
+{/*@bgen(jjtree) Write */
+  ASTWrite jjtn000 = new ASTWrite(JJTWRITE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) Write */
+  try {
+/*@egen*/
+  < PRINT > expression() [ LOOKAHEAD(file_load()) file_load() | LOOKAHEAD(dereference()) dereference() ]/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
 }
 
 void arglist()          :

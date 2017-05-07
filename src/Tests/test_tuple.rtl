@@ -3,11 +3,11 @@ a = () -> { return 2, 3, 4 }
 b = (x, y, z) -> { return x, y, z }
 
 
-print b(a())
-print 2.4 + [1,2,3]
-print 2 * "Tom"
-print 4 * "Jerry"
-print ["Tom", "And", "Jerry"] +  "Kids" * 6
+write b(a())
+write 2.4 + [1,2,3]
+write 2 * "Tom"
+write 4 * "Jerry"
+write ["Tom", "And", "Jerry"] +  "Kids" * 6
 
 tuple = [1, a(), 5]
 tuple2 = [6, 7, 8]
@@ -19,17 +19,17 @@ expression_test = [1*2, 1.5*2, 2*1.7, "To" + 2, 2+"To", 2/1.5, [2,4,5]+[1,2,3]]
 expression_test = [2,4,9] + expression_test
 
 
-print "TUPLE ::"
-print tuple
-print "Tuple 2 ::"
-print tuple2
-print "Tuple 3 (tuple + tuple2) ::"
-print tuple3
-print "Tuple 4 (tuple + tuple2 + normalval)"
-print tuple4
-print "Multi Tuple"
-print multi_tuple
-print "expression_test"
-print expression_test
+write "TUPLE ::"
+write tuple
+write "Tuple 2 ::"
+write tuple2
+write "Tuple 3 (tuple + tuple2) ::"
+write tuple3
+write "Tuple 4 (tuple + tuple2 + normalval)"
+write tuple4
+write "Multi Tuple"
+write multi_tuple
+write "expression_test"
+write expression_test
 
 

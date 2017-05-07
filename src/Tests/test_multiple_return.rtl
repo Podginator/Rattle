@@ -12,8 +12,8 @@ class MultiReturnObject {
     }
 }
 
-print singleReturn()
-print twoReturn()
+write singleReturn()
+write twoReturn()
 
 def expectFiveParams(a,b,c,d,e) {
     return a,b,c,d,e
@@ -23,20 +23,20 @@ def DifferReturnType() {
     return 1, 2.3, "4.5", false
 }
 a,b,c,d = DifferReturnType()
-print a
-print b
-print c
-print d
-print expectFiveParams(DifferReturnType(), 7)
+write a
+write b
+write c
+write d
+write expectFiveParams(DifferReturnType(), 7)
 
 obj = {create MultiReturnObject}
-print obj->threeReturn()
+write obj->threeReturn()
 
-print DifferReturnType()
+write DifferReturnType()
 
 def test_mutable(a) {
     a = 12
 }
 x = 11
 test_mutable(x)
-print x
+write x

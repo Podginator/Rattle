@@ -2,8 +2,8 @@
 class firstTest {
     a = 12
 
-    def printGoodbye() {
-        print "First Test A: " + a
+    def writeGoodbye() {
+        write "First Test A: " + a
     }
 }
 
@@ -11,8 +11,8 @@ class firstTest {
 class secondTest extends firstTest {
     a = 13
 
-    def printGoodbye() {
-        print "Second Test A " + a
+    def writeGoodbye() {
+        write "Second Test A " + a
     }
 
 }
@@ -54,9 +54,9 @@ class test extends firstTest {
         return counter
     }
 
-    // This prints something different than super->printGoodbye
-    def printGoodbye() {
-        print "Goodbye"
+    // This writes something different than super->writeGoodbye
+    def writeGoodbye() {
+        write "Goodbye"
     }
 }
 
@@ -104,11 +104,11 @@ class hello extends test {
 	    return counter
 	}
 
-	def printGoodbye() {
-	    print "Top Layer Goodbye!"
+	def writeGoodbye() {
+	    write "Top Layer Goodbye!"
 	}
 
-	def printHelloaa(c) {
+	def writeHelloaa(c) {
 	    return c
 	}
 }
@@ -116,26 +116,26 @@ class hello extends test {
 i = 7
 i = {create hello where name="ey!"}
 
-print i->name
+write i->name
 
 // This simple lambda returns two things, so to get both values from it we'd have to say a,b =
 simpleLambda = (x,y) -> { return y + x, x / y }
-print i->name
+write i->name
 a,b = simpleLambda(1,2)
-print "return 1 of simpleLambda: " + a
-print "return 2 of simple Lambda: " + b
+write "return 1 of simpleLambda: " + a
+write "return 2 of simple Lambda: " + b
 
 // This just proves we can do this without functions
 c, d, e, f = 12, "T",  "O", "M"
-print "c = " + c
-print "d = " + d
-print "e = " + e
-print "f = " + f
+write "c = " + c
+write "d = " + d
+write "e = " + e
+write "f = " + f
 
 // This just proves we can do this with member variables
 i->name, i->inner->name = d, e
-print "i->name = " + i->name
-print "i->inner->name = " + i->inner->name
+write "i->name = " + i->name
+write "i->inner->name = " + i->inner->name
 
 lambdaA = (x)->{ return x * 4 }
 lambdaB = (x)->{ return x * 8 }
@@ -143,7 +143,7 @@ lambdaC = (x)->{ return x * 16 }
 lambdaD = lambdaA + lambdaB + lambdaC
 
 i->incrementAndGetCounter()
-print "i->operateOnCounter(x,y) where x =  lambda curried to do x * 4 * 8 * 16, counter = 1 and y = 0.  So 512 : "
+write "i->operateOnCounter(x,y) where x =  lambda curried to do x * 4 * 8 * 16, counter = 1 and y = 0.  So 512 : "
             + i->operateOnCounter(lambdaD, 0)
 
 
@@ -152,5 +152,5 @@ multiLambdaB = (x,y)->{return (x + y)* 4 }
 multiLambdaD = multiLambdaA + multiLambdaB
 
 resultA, resultB = multiLambdaD(1,2)
-print resultA
-print multiLambdaD(1,3)[1]
+write resultA
+write multiLambdaD(1,3)[1]

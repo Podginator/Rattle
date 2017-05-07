@@ -5,12 +5,12 @@ b = "b"     // b is a string
 a = b       // a is a string
 b = 12      // b is an int, a is still a string
 
-print a     // a is "b"
-print b     // b is "12"
+write a     // a is "b"
+write b     // b is "12"
 
 a = 12                 // a is an int
 a = a + 2.4           // a is a float
 a = a + "StringNow"   // a is a string
-print a
+write a
 
 

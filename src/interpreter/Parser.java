@@ -4,7 +4,9 @@ import interpreter.ClassDefinition.ClassInstance;
 import interpreter.Display.Reference;
 import parser.*;
 import values.*;
-
+import values.WritableValues.ValueFile;
+import values.WritableValues.Writable;
+import values.WritableValues.std_out;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,11 @@ public class Parser implements RattleVisitor {
         return (SimpleNode) node.jjtGetChild(childIndex);
     }
 
+    // Get the token value of the ith child of a given node.
+    private static String getTokenOfChild(SimpleNode node, int childIndex) {
+        return getChild(node, childIndex).tokenValue;
+    }
+
     // Execute a given child of a given node, and return its value as a Value.
     // This is used by the expression evaluation nodes.
     Value doChild(SimpleNode node, int childIndex) {
@@ -30,12 +37,6 @@ public class Parser implements RattleVisitor {
             System.exit(1);
         }
         return null;
-    }
-
-
-    // Get the token value of the ith child of a given node.
-    private static String getTokenOfChild(SimpleNode node, int childIndex) {
-        return getChild(node, childIndex).tokenValue;
     }
 
     // Execute a given child of the given node
@@ -102,7 +103,7 @@ public class Parser implements RattleVisitor {
         if (scope.findFunctionInCurrentLevel(fnname) != null)
             throw new ExceptionSemantic("Function " + fnname + " already exists.");
 
-        FunctionDefinition currentFunctionDefinition = new FunctionDefinition(fnname, scope.getLevel() + 1, scope) ;
+        FunctionDefinition currentFunctionDefinition = new FunctionDefinition(fnname, scope.getLevel() + 1, scope);
         // Child 1 - function definition parameter list
         doChild(node, 1, currentFunctionDefinition);
 
@@ -190,7 +191,7 @@ public class Parser implements RattleVisitor {
         }
 
         if (retVal != null) {
-            return  retVal.length == 1 ? retVal[0] : retVal;
+            return retVal.length == 1 ? retVal[0] : retVal;
         }
         return data;
     }
@@ -217,11 +218,11 @@ public class Parser implements RattleVisitor {
 
         PerformInNewScope(() -> {
             if (((ValueBoolean) hopefullyValueBoolean).booleanValue())
-                    doChild(node, 1, null);                            // if(true), therefore do 'if' statement
-                else if (node.ifHasElse)                        // does it have an else statement?
-                    doChild(node, 2, null);                            // if(false), therefore do 'else' statement
+                doChild(node, 1, null);                            // if(true), therefore do 'if' statement
+            else if (node.ifHasElse)                        // does it have an else statement?
+                doChild(node, 2, null);                            // if(false), therefore do 'else' statement
 
-                return null;
+            return null;
         });
         return data;
 
@@ -229,9 +230,8 @@ public class Parser implements RattleVisitor {
 
     // Execute a FOR loop
     public Object visit(ASTForLoop node, Object data) {
-        // loop initialisation
-        doChild(node, 0, null);
-        PerformInNewScope(()-> {
+        PerformInNewScope(() -> {
+            doChild(node, 0, null);
             while (true) {
                 // evaluate loop test
                 Value hopefullyValueBoolean = doChild(node, 1);
@@ -258,12 +258,12 @@ public class Parser implements RattleVisitor {
 
     @Override
     public Object visit(ASTMultiAssignment node, Object data) {
-        Display.Reference reference  = null;
+        Display.Reference reference = null;
 
         int indexOfExpressions;
 
         if (node.optimized != null) {
-            indexOfExpressions = (Integer)node.optimized;
+            indexOfExpressions = (Integer) node.optimized;
         } else {
             indexOfExpressions = getIndexOfExpressionsInAssignment(node);
             node.optimized = new Integer(indexOfExpressions);
@@ -312,17 +312,30 @@ public class Parser implements RattleVisitor {
 
     // Execute the WRITE statement
     public Object visit(ASTWrite node, Object data) {
+
         Value[] vals = doChildMulti(node, 0, null);
         boolean first = true;
+        Writable writer = null;
+
+
+        if (node.jjtGetNumChildren() == 2) {
+            Value val = doChild(node, 1);
+            if (val instanceof ValueFile) {
+                writer = (Writable) val;
+            }
+        } else {
+            writer = new std_out();
+        }
+
 
         for (Value val : vals) {
             if (!first) {
-                System.out.print(", ");
+                writer.write(", ");
             }
-            System.out.print(val);
+            writer.write(val.toString());
             first = false;
         }
-        System.out.println();
+        writer.write("\n");
         return data;
     }
 
@@ -331,7 +344,7 @@ public class Parser implements RattleVisitor {
     public Object visit(ASTDereference node, Object data) {
 
         if (node.optimized != null) {
-            return ((Reference)node.optimized).getValue();
+            return ((Reference) node.optimized).getValue();
         }
 
         SimpleNode child = getChild(node, 0);
@@ -362,11 +375,11 @@ public class Parser implements RattleVisitor {
     }
 
     private Reference getReferenceFromMember(ASTMemIdentifier id) {
-        Reference res =  scope.findReference(id.tokenValue);
+        Reference res = scope.findReference(id.tokenValue);
 
         if (res != null) {
             for (int i = 0; i < id.jjtGetNumChildren(); i++) {
-                ClassInstance  obj = ((ValueObject)res.getValue()).objValue();
+                ClassInstance obj = ((ValueObject) res.getValue()).objValue();
                 String memName = getTokenOfChild(id, i);
                 res = obj.getMember(memName);
                 if (res == null) {
@@ -404,7 +417,7 @@ public class Parser implements RattleVisitor {
     // Execute an assignment statement.
     public Object visit(ASTAssignment node, Object data) {
 
-        Display.Reference reference  = null;
+        Display.Reference reference = null;
 
 
         if (node.optimized == null) {
@@ -419,7 +432,7 @@ public class Parser implements RattleVisitor {
                 node.optimized = reference;
             }
         } else
-            reference = (Display.Reference)node.optimized;
+            reference = (Display.Reference) node.optimized;
         reference.setValue(doChild(node, 1));
         return data;
 
@@ -541,7 +554,7 @@ public class Parser implements RattleVisitor {
 
     @Override
     public Object visit(ASTWhileLoop node, Object data) {
-        PerformInNewScope(()->{
+        PerformInNewScope(() -> {
             while (true) {
                 // evaluate loop test
                 Value hopefullyValueBoolean = doChild(node, 0);
@@ -603,6 +616,20 @@ public class Parser implements RattleVisitor {
         return data;
     }
 
+    @Override
+    public Object visit(ASTFileLoad node, Object data) {
+        String filepath = doChild(node, 0).toString();
+        ValueFile file = null;
+        try {
+            file = new ValueFile(filepath);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return file;
+
+    }
+
     public Object visit(ASTMemAssignment node, Object data) {
         ClassDefinition def = (ClassDefinition) data;
         String name = getTokenOfChild(node, 0);
@@ -637,7 +664,7 @@ public class Parser implements RattleVisitor {
         }
 
         ClassInstance instance = ref.getValue().objValue();
-        Value[] val = (Value[]) PerformInScope(instance.getScope(), ()-> {
+        Value[] val = (Value[]) PerformInScope(instance.getScope(), () -> {
             String methodName = getTokenOfChild(node, nodesBeforeMethod);
             FunctionDefinition fndef = instance.findMethod(methodName);
 
@@ -653,7 +680,7 @@ public class Parser implements RattleVisitor {
         });
 
         if (val != null) {
-            return  val.length == 1 ? val[0] : val;
+            return val.length == 1 ? val[0] : val;
         }
         return data;
     }
@@ -717,7 +744,7 @@ public class Parser implements RattleVisitor {
         // Child 1 - arglist
         doChild(node, 1, newInvocation);
 
-        Object retVal = PerformInScope(instance.getScope(), ()-> instance.executeMethod(newInvocation, this));
+        Object retVal = PerformInScope(instance.getScope(), () -> instance.executeMethod(newInvocation, this));
 
         return reference.hasReturn() ? retVal : data;
     }
@@ -725,7 +752,7 @@ public class Parser implements RattleVisitor {
     @Override
     public Object visit(ASTLabmdaDefine node, Object data) {
 
-        FunctionDefinition currentFunctionDefinition = new FunctionDefinition("", scope.getLevel() + 1, scope) ;
+        FunctionDefinition currentFunctionDefinition = new FunctionDefinition("", scope.getLevel() + 1, scope);
 
         // Child 1 - function definition parameter list
         doChild(node, 0, currentFunctionDefinition);
