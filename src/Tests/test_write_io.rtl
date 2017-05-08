@@ -1,0 +1,5 @@
+file_name = file::("file.txt")
+write "This is an easy way to write to file" (file_name)
+
+// This is an easy way to read from files.
+write file_name
