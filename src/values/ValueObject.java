@@ -20,7 +20,8 @@ public class ValueObject extends ValueAbstract {
 
     @Override
     public int compare(Value v) {
-        return 0;
+
+        return -1;
     }
 
     @Override

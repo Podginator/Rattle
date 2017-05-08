@@ -1,0 +1,95 @@
+class LinkNode {
+    data = NONE
+    next = NONE
+}
+
+class LinkedList {
+    head = NONE
+    size = 0
+
+    // Add next item
+    def add(item) {
+
+        if (head == NONE) {
+            this->head = {create LinkNode where data = item, next = NONE}
+        } else {
+            temp = head
+            done = false
+            while (done == false) {
+                if (temp->next == NONE) {
+                    temp->next = {create LinkNode where data = item, next = NONE}
+                    done = true
+                } else if (done == false) {
+                    temp = temp->next
+                }
+            }
+        }
+
+        size = size + 1
+    }
+
+    // Go through and print the elements in the list
+    def print_list() {
+        temp = head
+        done = false
+
+        while (done == false) {
+            if (temp->next == NONE) {
+                done = true
+            }
+            write temp->data
+            temp = temp->next
+        }
+    }
+
+    def get(i) {
+        temp = NONE
+        if (size > i) {
+            temp = head
+            while (i > 0) {
+                temp = temp->next
+                i = i - 1
+            }
+        }
+
+        return temp->data
+    }
+
+    def remove(i) {
+        temp = NONE
+        res = NONE
+        if (size > i) {
+            temp = head
+            while (i > 1) {
+                temp = temp->next
+                i = i - 1
+            }
+        }
+
+        //Bugs abound but it's just for praticalities sake
+        res = temp->next
+        temp->next = temp->next->next
+        size = size - 1
+
+    }
+
+}
+
+
+ll = {create LinkedList}
+
+ll->add("Hello")
+ll->add("World")
+ll->print_list()
+ll->add("Tom")
+ll->print_list()
+write ll->get(1)
+
+for (i = 0; i < ll->size; i = i +1 ) {
+    write i
+    write ll->get(i)
+}
+
+ll->remove(1)
+ll->print_list()
+

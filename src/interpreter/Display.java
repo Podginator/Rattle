@@ -17,6 +17,9 @@ class Display implements ClassDefinitionRepository {
     private Map<String, ClassDefinition> classes = new HashMap<String, ClassDefinition>();
     private int currentLevel;
     private Display outerscope;
+    // There are outerscopes, but we might have also called from an inner block, and thus we need to
+    // set the calling scope.
+    private Display called_scope;
     public static Display globalScope = new Display();
 
     /**
@@ -57,6 +60,10 @@ class Display implements ClassDefinitionRepository {
         return outerscope;
     }
 
+    public void setCalledScope(Display display) {
+        called_scope = display;
+    }
+
     /**
      * Get the current scope nesting level.
      */
@@ -85,19 +92,25 @@ class Display implements ClassDefinitionRepository {
      */
     Reference findReference(String name, boolean traverseDown) {
         int level = currentLevel;
+        Reference ref = null;
+
         while (level >= 0) {
             int offset = display[level].findSlotNumber(name);
             if (offset >= 0)
-                return new Reference(level, offset, this);
+                ref = new Reference(level, offset, this);
             level--;
         }
 
-       // // Look through the outerscopes (Should recurse back until we hit global).
-        if (outerscope != null && traverseDown) {
-            return outerscope.findReference(name);
+        // Look through the outerscopes (Should recurse back until we hit global).
+        if (ref == null && outerscope != null && traverseDown) {
+            ref =  outerscope.findReference(name);
         }
 
-        return null;
+        if (ref == null && called_scope != null && traverseDown) {
+            ref = called_scope.findReference(name);
+        }
+
+        return ref;
     }
 
     /**

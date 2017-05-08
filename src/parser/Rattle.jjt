@@ -91,6 +91,7 @@ TOKEN [ IGNORE_CASE ] : /* RESERVED WORDS AND LITERALS */
 | < NOT : "NOT" >
 | < TRUE : "TRUE" >
 | < FALSE : "FALSE" >
+| < NULL : "NONE" >
 | < FN : "DEF" >
 | < CLASS : "CLASS" >
 | < RETURN : "RETURN" >
@@ -328,6 +329,11 @@ void fnbody() #FnBody :
   )*
 }
 
+void token_null() #NULL :
+{}
+{
+    < NULL >
+}
 
 void fndef() #FnDef :
 {}
@@ -378,7 +384,7 @@ void file_load() #FileLoad :
 void tuple_define() #TupleDefine :
 {}
 {
-    "[" expression() (","expression())* "]"
+    "[" [expression() (","expression())*] "]"
 }
 
 
@@ -497,7 +503,7 @@ void whileloop() #WhileLoop :
 void write() #Write :
 {}
 {
-  < PRINT > expression() [ LOOKAHEAD(file_load()) file_load() | LOOKAHEAD(dereference()) dereference() ]
+  < PRINT > expression() ["(" ( file_load() | dereference()) ")"]
 }
 
 void arglist() #ArgList :
@@ -626,10 +632,11 @@ void method_invoke() #MethodInvoke :
 void literal() :
 {}
 {
-    integer()
-|  rational()
+  integer()
+| rational()
 | character()
 | bool()
+| token_null()
 }
 
 void identifier() #Identifier :

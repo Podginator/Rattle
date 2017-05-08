@@ -1,5 +1,27 @@
-file_name = file::("file.txt")
-write "This is an easy way to write to file" file_name
+if (2 > 1) {
+    a = 7
+}
 
-// This is an easy way to write to files.
-write file_name
+
+if (1 > 2) {
+    a = 1
+} else {
+    a = 1
+}
+
+
+for (i = 0; i < 10; i = i + 1) {
+    write i
+    a = 1
+}
+
+write a
+
+i = 0
+while ( i < 10 ) {
+    write i
+    i = i + 1
+    a = 12
+}
+
+write a

@@ -180,7 +180,7 @@ public class Parser implements RattleVisitor {
             for (int i = 1; i < fndefs.size(); i++) {
                 final Value[] rets = retVal;
                 final int j = i;
-                retVal = (Value[]) PerformInScope(fndefs.get(i).getScope(), () -> {
+                retVal = (Value[]) PerformInScope(fndefs.get(i).getScope(), scope, () -> {
                     FunctionInvocation newInv = new FunctionInvocation(fndefs.get(j));
                     for (Value value : rets) {
                         newInv.setArgument(value);
@@ -339,13 +339,13 @@ public class Parser implements RattleVisitor {
         return data;
     }
 
+    @Override
+    public Object visit(ASTNULL node, Object data) {
+        return new ValueNull();
+    }
 
     // Dereference a variable or parameter, and return its value.
     public Object visit(ASTDereference node, Object data) {
-
-        if (node.optimized != null) {
-            return ((Reference) node.optimized).getValue();
-        }
 
         SimpleNode child = getChild(node, 0);
         String name = getTokenOfChild(node, 0);
@@ -411,31 +411,27 @@ public class Parser implements RattleVisitor {
     @Override
     public Object visit(ASTIndexedExpression node, Object data) {
         int index = doChild(node, 1).intValue();
-        return doChildMulti(node, 0, data)[index];
+        Value[] val = doChildMulti(node, 0, data);
+        return val != null && val.length >= (index + 1) ? val[index] : new ValueNull();
     }
 
     // Execute an assignment statement.
     public Object visit(ASTAssignment node, Object data) {
-
         Display.Reference reference = null;
 
 
-        if (node.optimized == null) {
-            String name = getTokenOfChild(node, 0);
-
-            if (node.isObject) {
-                reference = getReferenceFromMember((ASTMemIdentifier) node.jjtGetChild(0));
-            } else {
-                reference = scope.findReference(name);
-                if (reference == null)
-                    reference = scope.defineVariable(name);
-                node.optimized = reference;
+        String name = getTokenOfChild(node, 0);
+        if (node.isObject) {
+            reference = getReferenceFromMember((ASTMemIdentifier) node.jjtGetChild(0));
+        } else {
+            reference = scope.findReference(name);
+            if (reference == null) {
+                reference = scope.defineVariable(name);
             }
-        } else
-            reference = (Display.Reference) node.optimized;
+        }
+
         reference.setValue(doChild(node, 1));
         return data;
-
 
     }
 
@@ -664,7 +660,7 @@ public class Parser implements RattleVisitor {
         }
 
         ClassInstance instance = ref.getValue().objValue();
-        Value[] val = (Value[]) PerformInScope(instance.getScope(), () -> {
+        Value[] val = (Value[]) PerformInScope(instance.getScope(), scope, () -> {
             String methodName = getTokenOfChild(node, nodesBeforeMethod);
             FunctionDefinition fndef = instance.findMethod(methodName);
 
@@ -744,7 +740,8 @@ public class Parser implements RattleVisitor {
         // Child 1 - arglist
         doChild(node, 1, newInvocation);
 
-        Object retVal = PerformInScope(instance.getScope(), () -> instance.executeMethod(newInvocation, this));
+
+        Object retVal = PerformInScope(instance.getScope(), scope,() -> instance.executeMethod(newInvocation, this));
 
         return reference.hasReturn() ? retVal : data;
     }
@@ -791,10 +788,17 @@ public class Parser implements RattleVisitor {
 
     // Perform In the specified scope, then return to the eold one.
     private Object PerformInScope(Display scopeRunner, ScopeRunner runner) {
+        return PerformInScope(scopeRunner, null, runner);
+    }
+
+    // Perform In the specified scope, then return to the eold one.
+    private Object PerformInScope(Display scopeRunner, Display calledScope, ScopeRunner runner) {
         Display oldScope = scope;
         scope = scopeRunner;
+        scopeRunner.setCalledScope(calledScope);
         Object ret = runner.doAndReturn();
         scope = oldScope;
+        scopeRunner.setCalledScope(null);
 
         return ret;
     }

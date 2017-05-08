@@ -95,6 +95,7 @@ TOKEN [ IGNORE_CASE ] : /* RESERVED WORDS AND LITERALS */
 | < NOT : "NOT" >
 | < TRUE : "TRUE" >
 | < FALSE : "FALSE" >
+| < NULL : "NONE" >
 | < FN : "DEF" >
 | < CLASS : "CLASS" >
 | < RETURN : "RETURN" >
@@ -493,6 +494,23 @@ void fnbody()         :
 /*@egen*/
 }
 
+void token_null()       :
+{/*@bgen(jjtree) NULL */
+  ASTNULL jjtn000 = new ASTNULL(JJTNULL);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) NULL */
+    try {
+/*@egen*/
+    < NULL >/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
 
 void fndef()        :
 {/*@bgen(jjtree) FnDef */
@@ -653,7 +671,7 @@ void tuple_define()              :
 {/*@bgen(jjtree) TupleDefine */
     try {
 /*@egen*/
-    "[" expression() (","expression())* "]"/*@bgen(jjtree)*/
+    "[" [expression() (","expression())*] "]"/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -1032,7 +1050,7 @@ void write()        :
 {/*@bgen(jjtree) Write */
   try {
 /*@egen*/
-  < PRINT > expression() [ LOOKAHEAD(file_load()) file_load() | LOOKAHEAD(dereference()) dereference() ]/*@bgen(jjtree)*/
+  < PRINT > expression() ["(" ( file_load() | dereference()) ")"]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -1690,10 +1708,11 @@ void method_invoke()               :
 void literal() :
 {}
 {
-    integer()
-|  rational()
+  integer()
+| rational()
 | character()
 | bool()
+| token_null()
 }
 
 void identifier()             :

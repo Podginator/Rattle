@@ -45,7 +45,7 @@ public class ValueFile extends ValueAbstract implements Writable {
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(mfile));
-            String line = "";
+            String line;
             StringBuilder stringBuilder = new StringBuilder();
             String ls = System.getProperty("line.separator");
 

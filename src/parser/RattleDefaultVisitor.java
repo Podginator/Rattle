@@ -27,6 +27,9 @@ public class RattleDefaultVisitor implements RattleVisitor{
   public Object visit(ASTFnBody node, Object data){
     return defaultVisit(node, data);
   }
+  public Object visit(ASTNULL node, Object data){
+    return defaultVisit(node, data);
+  }
   public Object visit(ASTFnDef node, Object data){
     return defaultVisit(node, data);
   }
@@ -154,4 +157,4 @@ public class RattleDefaultVisitor implements RattleVisitor{
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=b164d986d7c63c5d72495174a95546a0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=e5fd138a217d63681419080a78e98df8 (do not edit this line) */

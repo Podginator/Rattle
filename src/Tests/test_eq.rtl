@@ -1,0 +1,11 @@
+test_string = "hey"
+test_tup = []
+
+if (test_string == "hey") {
+    write "hey"
+}
+
+
+if (test_tup[0] == NONE) {
+    write "Null Val Found"
+}
