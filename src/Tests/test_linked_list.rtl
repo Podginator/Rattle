@@ -1,11 +1,11 @@
-class LinkNode {
-    data = NONE
-    next = NONE
-}
-
 class LinkedList {
     head = NONE
     size = 0
+
+    class LinkNode {
+        data = NONE
+        next = NONE
+    }
 
     // Add next item
     def add(item) {

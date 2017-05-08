@@ -1,0 +1,50 @@
+class TupleList {
+    arr_list = []
+    size = 0
+
+    // Add next item
+    def add(item) {
+        arr_list = this->arr_list + [item]
+        size = size + 1
+    }
+
+    // Go through and print the elements in the list
+    def print_list() {
+        for (i = 0; i < size; i = i +1 ) {
+            write this->get(i)
+        }
+
+    }
+
+    def get(i) {
+        return arr_list[i]
+    }
+
+    def remove(i) {
+        temp = []
+
+        for (j = 0; j < size; j = j + 1) {
+            if ( j != i ) {
+                temp = temp + arr_list[j]
+            }
+        }
+
+        arr_list = temp
+        this->size = this->size - 1
+
+
+    }
+
+}
+
+arr_list = {create TupleList}
+arr_list->add("T")
+arr_list->add("O")
+arr_list->add("M")
+arr_list->print_list()
+arr_list->remove(1)
+arr_list->print_list()
+
+for (j = 0; j < arr_list->size; j = j + 1) {
+    write arr_list->get(j)
+}

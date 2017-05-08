@@ -32,4 +32,6 @@ write multi_tuple
 write "expression_test"
 write expression_test
 
+write tuple[0]
+
 

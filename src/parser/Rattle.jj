@@ -1223,7 +1223,7 @@ void compare_expression() :
            }
          }
 /*@egen*/              
-| "<>"/*@bgen(jjtree) #CompNequal( 2) */
+| "!="/*@bgen(jjtree) #CompNequal( 2) */
        {
          ASTCompNequal jjtn002 = new ASTCompNequal(JJTCOMPNEQUAL);
          boolean jjtc002 = true;
@@ -1594,7 +1594,13 @@ void indexed_expression()                     :
 {/*@bgen(jjtree) IndexedExpression */
     try {
 /*@egen*/
-    primary_expression() "[" integer() "]"/*@bgen(jjtree)*/
+    (
+        LOOKAHEAD(tuple_define())tuple_define()
+      | LOOKAHEAD(method_invoke()) method_invoke()
+      | LOOKAHEAD(fn_invoke()) fn_invoke()
+      | LOOKAHEAD(dereference()) dereference()
+    )
+     "[" (integer() | dereference()) "]"/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);

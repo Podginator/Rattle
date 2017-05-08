@@ -549,7 +549,7 @@ void compare_expression() :
   add_expression()
   [
     "==" add_expression() #CompEqual(2)
-| "<>" add_expression() #CompNequal(2)
+| "!=" add_expression() #CompNequal(2)
 | ">=" add_expression() #CompGTE(2)
 | "<=" add_expression() #CompLTE(2)
 | ">" add_expression() #CompGT(2)
@@ -590,7 +590,13 @@ void unary_expression() :
 void indexed_expression()  #IndexedExpression :
 {}
 {
-    primary_expression() "[" integer() "]"
+    (
+        LOOKAHEAD(tuple_define())tuple_define()
+      | LOOKAHEAD(method_invoke()) method_invoke()
+      | LOOKAHEAD(fn_invoke()) fn_invoke()
+      | LOOKAHEAD(dereference()) dereference()
+    )
+     "[" (integer() | dereference()) "]"
 }
 
 void primary_expression() :

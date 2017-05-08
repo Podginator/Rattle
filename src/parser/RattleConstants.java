@@ -200,7 +200,6 @@ public interface RattleConstants {
     "\"file::(\"",
     "\" where\"",
     "\"->\"",
-    "\"<>\"",
   };
 
 }
