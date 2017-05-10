@@ -1,0 +1,7 @@
+multiLambdaA = (x,y)->{return x * 2, y /2 }
+multiLambdaB = (x,y)->{return (x + y)* 4 }
+multiLambdaC = (x)->{return x*12}
+multiLambdaD = multiLambdaA + multiLambdaB + multiLambdaC
+
+
+write multiLambdaD(1,2)

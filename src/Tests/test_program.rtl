@@ -148,9 +148,13 @@ write "i->operateOnCounter(x,y) where x =  lambda curried to do x * 4 * 8 * 16, 
 
 
 multiLambdaA = (x,y)->{return x * 2, y /2 }
-multiLambdaB = (x,y)->{return (x + y)* 4 }
+multiLambdaB = (x,y)->{return (x + y)* 4}
 multiLambdaD = multiLambdaA + multiLambdaB
 
-resultA, resultB = multiLambdaD(1,2)
+resultA = multiLambdaD(1,2)
 write resultA
-write multiLambdaD(1,3)[1]
+
+
+resultB, resultC = multiLambdaA(1,2)
+write resultB
+write resultC

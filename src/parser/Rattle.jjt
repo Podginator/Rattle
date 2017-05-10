@@ -376,7 +376,7 @@ void member_assignment()  #MemAssignment(2) :
 void file_load() #FileLoad :
 {}
 {
-    "file::(" character() ")"
+    "file::(" character() ["," character() ] ")"
 }
 
 // A tuple is defined as one or more
@@ -503,7 +503,7 @@ void whileloop() #WhileLoop :
 void write() #Write :
 {}
 {
-  < PRINT > expression() ["(" ( file_load() | dereference()) ")"]
+  < PRINT > expression() ["(" ( file_load() | dereference())  ")"]
 }
 
 void arglist() #ArgList :

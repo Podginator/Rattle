@@ -637,7 +637,7 @@ void file_load()           :
 {/*@bgen(jjtree) FileLoad */
     try {
 /*@egen*/
-    "file::(" character() ")"/*@bgen(jjtree)*/
+    "file::(" character() ["," character() ] ")"/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -1050,7 +1050,7 @@ void write()        :
 {/*@bgen(jjtree) Write */
   try {
 /*@egen*/
-  < PRINT > expression() ["(" ( file_load() | dereference()) ")"]/*@bgen(jjtree)*/
+  < PRINT > expression() ["(" ( file_load() | dereference())  ")"]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

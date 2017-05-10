@@ -6,7 +6,6 @@ class firstTest {
     }
 }
 
-
 class secondTest extends firstTest {
     a = 2
 

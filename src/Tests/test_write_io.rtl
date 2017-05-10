@@ -3,3 +3,10 @@ write "This is an easy way to write to file" (file_name)
 
 // This is an easy way to read from files.
 write file_name
+
+
+append_file_name = file::("appendfile.txt", "-a")
+write "This is an easy way to Append to file" (append_file_name)
+
+// This is an easy way to read from files.
+write append_file_name

@@ -9,11 +9,16 @@ import java.io.*;
 public class ValueFile extends ValueAbstract implements Writable {
 
     private File mfile;
+    private boolean is_append;
 
 
     public ValueFile(String filepath) throws ParseException {
-        mfile = new File(filepath);
+        this(filepath, false);
+    }
 
+    public ValueFile(String filepath, boolean is_append) throws ParseException {
+        mfile = new File(filepath);
+        this.is_append = is_append;
         try {
             if (!mfile.exists() && !mfile.createNewFile()) {
                 throw new ParseException("Cannot find or create a new file");
@@ -26,23 +31,17 @@ public class ValueFile extends ValueAbstract implements Writable {
 
     @Override
     public String getName() {
-        return "File";
+        return "File @ " + toString();
     }
 
     @Override
     public int compare(Value v) {
-        return 0;
+        return mfile.compareTo(new File(v.stringValue()));
     }
 
 
     public String toString() {
-        return stringValue();
-    }
-
-    @Override
-    public String stringValue() {
         String res = null;
-
         try {
             BufferedReader reader = new BufferedReader(new FileReader(mfile));
             String line;
@@ -60,7 +59,11 @@ public class ValueFile extends ValueAbstract implements Writable {
         }
 
         return res;
+    }
 
+    @Override
+    public String stringValue() {
+        return mfile.getAbsolutePath();
     }
 
     @Override
@@ -68,13 +71,13 @@ public class ValueFile extends ValueAbstract implements Writable {
         BufferedWriter writer = null;
         try
         {
-            writer = new BufferedWriter(  new FileWriter(mfile, true));
+            writer = new BufferedWriter(  new FileWriter(mfile, is_append));
             PrintWriter out = new PrintWriter(writer);
             out.print(content);
         }
         catch ( IOException e)
         {
-            System.out.println("Cannot read string from the file");
+            System.out.println("Cannot write string from the file");
             e.printStackTrace();
         }
         finally

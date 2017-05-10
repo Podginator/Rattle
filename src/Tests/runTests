@@ -1,0 +1,23 @@
+echo "=== Test_eq.rtl (Tests Equality) ==="
+java -cp ../ Rattle < test_eq.rtl
+echo "=== Test_lambda_combine.rtl ==="
+java -cp ../ Rattle < test_lambda_combine.rtl
+echo "=== Test_Linked_list.rtl ==="
+java -cp ../ Rattle < test_linked_list.rtl
+echo "=== Test_multiple_return.rtl ==="
+java -cp ../ Rattle < test_multiple_return.rtl
+echo "=== Test_mutation.rtl ==="
+java -cp ../ Rattle < test_mutation.rtl
+echo "=== Test_polymorphism.rtl ==="
+java -cp ../ Rattle < test_polymorphism.rtl
+echo "=== Test_program.rtl ==="
+java -cp ../ Rattle < test_program.rtl
+echo "=== Test_scope.rtl ==="
+java -cp ../ Rattle < test_scope.rtl
+echo "=== Test_tuple.rtl ==="
+java -cp ../ Rattle < test_tuple.rtl
+echo "=== Test_tuple_list.rtl ==="
+java -cp ../ Rattle < test_tuple_list.rtl
+echo "=== Test_write_io.rtl ==="
+java -cp ../ Rattle < test_write_io.rtl
+

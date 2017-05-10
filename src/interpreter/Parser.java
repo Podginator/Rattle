@@ -2,6 +2,7 @@ package interpreter;
 
 import interpreter.ClassDefinition.ClassInstance;
 import interpreter.Display.Reference;
+import jdk.nashorn.internal.runtime.ParserException;
 import parser.*;
 import values.*;
 import values.WritableValues.ValueFile;
@@ -273,7 +274,14 @@ public class Parser implements RattleVisitor {
         int i = 0;
         int j = 0;
         while (i < indexOfExpressions) {
-            Value[] vals = doChildMulti(node, indexOfExpressions + j, null);
+            Value[] vals;
+
+            try {
+                vals = doChildMulti(node, indexOfExpressions + j, null);
+            } catch (IndexOutOfBoundsException e) {
+                throw new ParserException("Too few expressions to multiply assign");
+            }
+
 
             for (Value val : vals) {
                 SimpleNode child = getChild(node, i);
@@ -318,7 +326,13 @@ public class Parser implements RattleVisitor {
         Writable writer = null;
 
 
-        if (node.jjtGetNumChildren() == 2) {
+        int node_num_children = node.jjtGetNumChildren();
+        if (node_num_children >= 2) {
+            boolean isAppend = false;
+            if (node_num_children == 3) {
+                Value val = doChild(node, 3);
+                isAppend = val.stringValue().equals("-a");
+            }
             Value val = doChild(node, 1);
             if (val instanceof ValueFile) {
                 writer = (Writable) val;
@@ -327,15 +341,18 @@ public class Parser implements RattleVisitor {
             writer = new std_out();
         }
 
+        String resultString = "";
 
         for (Value val : vals) {
             if (!first) {
-                writer.write(", ");
+                resultString += (", ");
             }
-            writer.write(val.toString());
+            resultString += (val.toString());
             first = false;
         }
-        writer.write("\n");
+        resultString += "\n";
+
+        writer.write(resultString);
         return data;
     }
 
@@ -615,9 +632,14 @@ public class Parser implements RattleVisitor {
     @Override
     public Object visit(ASTFileLoad node, Object data) {
         String filepath = doChild(node, 0).toString();
+        boolean is_append = false;
+        if (node.jjtGetNumChildren() == 2) {
+            is_append = doChild(node, 1).stringValue().equals("-a");
+        }
+
         ValueFile file = null;
         try {
-            file = new ValueFile(filepath);
+            file = new ValueFile(filepath, is_append);
         } catch (ParseException e) {
             e.printStackTrace();
         }
