@@ -10,3 +10,7 @@ write "This is an easy way to Append to file" (append_file_name)
 
 // This is an easy way to read from files.
 write append_file_name
+
+socket_test = net::("localhost", 8888, 10000)
+write "Test" (socket_test)
+write socket_test

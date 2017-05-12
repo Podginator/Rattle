@@ -626,6 +626,37 @@ void member_assignment()                    :
 }
 
 
+void net_load()          :
+{/*@bgen(jjtree) NetLoad */
+  ASTNetLoad jjtn000 = new ASTNetLoad(JJTNETLOAD);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) NetLoad */
+    try {
+/*@egen*/
+    "net::(" character()"," integer() ["," integer() ]  ")"/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
 
 // Load a file.
 void file_load()           :
@@ -709,7 +740,7 @@ void assignment()             :
           | LOOKAHEAD(1)identifier()
         )
             "="
-            (LOOKAHEAD(expression()) expression() | LOOKAHEAD(file_load()) file_load())/*@bgen(jjtree)*/
+            (LOOKAHEAD(expression()) expression() | file_load() | net_load())/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1050,7 +1081,7 @@ void write()        :
 {/*@bgen(jjtree) Write */
   try {
 /*@egen*/
-  < PRINT > expression() ["(" ( file_load() | dereference())  ")"]/*@bgen(jjtree)*/
+  < PRINT > expression() ["(" ( file_load()  | net_load() | dereference())  ")"]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

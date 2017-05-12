@@ -197,6 +197,7 @@ public interface RattleConstants {
     "\"/\"",
     "\"%\"",
     "\"extends \"",
+    "\"net::(\"",
     "\"file::(\"",
     "\" where\"",
     "\"->\"",

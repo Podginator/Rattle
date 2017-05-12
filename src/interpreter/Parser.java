@@ -6,6 +6,7 @@ import jdk.nashorn.internal.runtime.ParserException;
 import parser.*;
 import values.*;
 import values.WritableValues.ValueFile;
+import values.WritableValues.ValueSocket;
 import values.WritableValues.Writable;
 import values.WritableValues.std_out;
 
@@ -334,7 +335,7 @@ public class Parser implements RattleVisitor {
                 isAppend = val.stringValue().equals("-a");
             }
             Value val = doChild(node, 1);
-            if (val instanceof ValueFile) {
+            if (val instanceof Writable) {
                 writer = (Writable) val;
             }
         } else {
@@ -646,6 +647,27 @@ public class Parser implements RattleVisitor {
 
         return file;
 
+    }
+
+
+    @Override
+    public Object visit(ASTNetLoad node, Object data) {
+        String socket_path = doChild(node, 0).toString();
+        int port = doChild(node, 1).intValue();
+        int timeout = 1000;
+
+        if (node.jjtGetNumChildren() == 3) {
+            timeout = doChild(node, 2).intValue();
+        }
+
+        ValueSocket socket = null;
+        try {
+            socket = new ValueSocket(socket_path, port, timeout);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return socket;
     }
 
     public Object visit(ASTMemAssignment node, Object data) {

@@ -371,6 +371,11 @@ void member_assignment()  #MemAssignment(2) :
 }
 
 
+void net_load() #NetLoad :
+{}
+{
+    "net::(" character()"," integer() ["," integer() ]  ")"
+}
 
 // Load a file.
 void file_load() #FileLoad :
@@ -396,7 +401,7 @@ void assignment() #Assignment :
           | LOOKAHEAD(1)identifier()
         )
             "="
-            (LOOKAHEAD(expression()) expression() | LOOKAHEAD(file_load()) file_load())
+            (LOOKAHEAD(expression()) expression() | file_load() | net_load())
 
 }
 
@@ -503,7 +508,7 @@ void whileloop() #WhileLoop :
 void write() #Write :
 {}
 {
-  < PRINT > expression() ["(" ( file_load() | dereference())  ")"]
+  < PRINT > expression() ["(" ( file_load()  | net_load() | dereference())  ")"]
 }
 
 void arglist() #ArgList :

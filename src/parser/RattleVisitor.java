@@ -14,6 +14,7 @@ public interface RattleVisitor
   public Object visit(ASTFnDef node, Object data);
   public Object visit(ASTReturnExpression node, Object data);
   public Object visit(ASTMemAssignment node, Object data);
+  public Object visit(ASTNetLoad node, Object data);
   public Object visit(ASTFileLoad node, Object data);
   public Object visit(ASTTupleDefine node, Object data);
   public Object visit(ASTAssignment node, Object data);
@@ -54,4 +55,4 @@ public interface RattleVisitor
   public Object visit(ASTTrue node, Object data);
   public Object visit(ASTFalse node, Object data);
 }
-/* JavaCC - OriginalChecksum=72533201389412303ede3c4c91c25678 (do not edit this line) */
+/* JavaCC - OriginalChecksum=ed5f53f3cf715fd50e6626365fdd8096 (do not edit this line) */

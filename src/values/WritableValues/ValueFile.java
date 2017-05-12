@@ -31,7 +31,7 @@ public class ValueFile extends ValueAbstract implements Writable {
 
     @Override
     public String getName() {
-        return "File @ " + toString();
+        return "File @ " + stringValue();
     }
 
     @Override
